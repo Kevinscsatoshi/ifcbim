@@ -103,8 +103,8 @@ body::before {
 }
 
 .masthead {
-  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.72fr);
-  align-items: stretch;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: flex-start;
 }
 
 .eyebrow {
@@ -184,15 +184,30 @@ h3 {
 
 .lead {
   max-width: 58ch;
-  margin-top: 1rem;
+  margin-top: 0.9rem;
   font-size: 0.96rem;
 }
 
-.runtime-card {
-  padding: 1.3rem;
+.masthead-subrow {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.runtime-inline {
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 0.25rem;
+  align-items: flex-start;
+}
+
+.runtime-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
 }
 
 .oda-download-cta {
@@ -284,7 +299,7 @@ h3 {
 .capability-status {
   display: inline-flex;
   align-self: flex-start;
-  margin-top: 0.4rem;
+  margin-top: 0.1rem;
   padding: 0.56rem 0.88rem;
   border-radius: 999px;
   background: color-mix(in oklab, var(--accent) 18%, white);
@@ -703,6 +718,11 @@ button:disabled {
   .masthead,
   .interface-grid {
     grid-template-columns: 1fr;
+  }
+
+  .masthead-subrow {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .viewer-shell {

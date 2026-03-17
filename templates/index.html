@@ -34,14 +34,22 @@
         <div class="masthead-copy">
           <p class="eyebrow" data-i18n="mastheadBrand">CAD2BIM Studio</p>
           <h1 data-i18n="mastheadTitle">Turn DXF drafts into a live IFC scene.</h1>
-          <p class="lead" data-i18n="mastheadLead">
-            Upload a DXF drawing, map CAD layers into IFC classes, export the IFC package,
-            and inspect the generated 3D massing directly in the browser.
-          </p>
-        </div>
-        <div class="runtime-card">
-          <p class="eyebrow" data-i18n="eyebrowRuntime">Runtime</p>
-          <div id="capability-status" class="capability-status" data-i18n="runtimeChecking">Checking runtime</div>
+          <div class="masthead-subrow">
+            <p class="lead" data-i18n="mastheadLead">
+              Upload a DXF drawing, map CAD layers into IFC classes, export the IFC package,
+              and inspect the generated 3D massing directly in the browser.
+            </p>
+            <div class="runtime-inline">
+              <span class="runtime-label" data-i18n="eyebrowRuntime">Runtime</span>
+              <span
+                id="capability-status"
+                class="capability-status"
+                data-i18n="runtimeChecking"
+              >
+                Checking runtime
+              </span>
+            </div>
+          </div>
           <p id="capability-message" class="runtime-copy" data-i18n="runtimeMessage">
             Inspecting DXF support, conversion tools, and upload limits.
           </p>
