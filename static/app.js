@@ -176,6 +176,7 @@ const selectionPanel = document.getElementById("selection-panel");
 const selectionTitle = document.getElementById("selection-title");
 const selectionMeta = document.getElementById("selection-meta");
 const selectionExtra = document.getElementById("selection-extra");
+const selectionViewerCanvas = document.getElementById("selection-viewer-canvas");
 const resetCameraButton = document.getElementById("reset-camera");
 const wireframeButton = document.getElementById("toggle-wireframe");
 const odaDownloadCta = null;
@@ -211,6 +212,14 @@ const viewerState = {
   wireframe: false,
   raycaster: new THREE.Raycaster(),
   pointer: new THREE.Vector2(),
+};
+
+const selectionViewerState = {
+  renderer: null,
+  scene: null,
+  camera: null,
+  modelRoot: null,
+  resizeObserver: null,
 };
 
 function setStatus(message) {
@@ -394,25 +403,127 @@ function updateSelectionPanel(info) {
   if (!info) {
     selectionPanel.classList.add("hidden");
     selectionTitle.textContent = t("selectionEmptyTitle");
-    selectionMeta.textContent = "";
-    selectionExtra.textContent = "";
+    selectionMeta.innerHTML = "";
+    selectionExtra.innerHTML = "";
+    updateSelectionViewer(null);
     return;
   }
   const title = info.name || info.ifcClass || "";
   selectionTitle.textContent = title || t("selectionEmptyTitle");
-  const metaParts = [];
-  if (info.ifcClass) metaParts.push(`${t("selectionClass")}: ${info.ifcClass}`);
-  if (info.layer) metaParts.push(`${t("selectionLayer")}: ${info.layer}`);
-  selectionMeta.textContent = metaParts.join(" · ");
-  const extraParts = [];
+  const metaItems = [];
+  if (info.ifcClass) metaItems.push(`<li><strong>${t("selectionClass")}:</strong> ${info.ifcClass}</li>`);
+  if (info.layer) metaItems.push(`<li><strong>${t("selectionLayer")}:</strong> ${info.layer}</li>`);
+  selectionMeta.innerHTML = metaItems.length ? `<ul>${metaItems.join("")}</ul>` : "";
+  const extraItems = [];
   if (typeof info.length === "number" && info.length > 0) {
-    extraParts.push(`${t("selectionLength")}: ${info.length.toFixed(3)} m`);
+    extraItems.push(
+      `<li><strong>${t("selectionLength")}:</strong> ${info.length.toFixed(3)} m</li>`,
+    );
   }
   if (info.text) {
-    extraParts.push(`${t("selectionText")}: ${info.text}`);
+    extraItems.push(`<li><strong>${t("selectionText")}:</strong> ${info.text}</li>`);
   }
-  selectionExtra.textContent = extraParts.join(" · ");
+  selectionExtra.innerHTML = extraItems.length ? `<ul>${extraItems.join("")}</ul>` : "";
   selectionPanel.classList.remove("hidden");
+}
+
+function ensureSelectionViewer() {
+  if (selectionViewerState.renderer || !selectionViewerCanvas) return;
+  const renderer = new THREE.WebGLRenderer({ canvas: selectionViewerCanvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 1.4));
+  const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+  keyLight.position.set(8, 10, 6);
+  scene.add(keyLight);
+
+  const modelRoot = new THREE.Group();
+  scene.add(modelRoot);
+
+  selectionViewerState.renderer = renderer;
+  selectionViewerState.scene = scene;
+  selectionViewerState.camera = camera;
+  selectionViewerState.modelRoot = modelRoot;
+
+  const resize = () => {
+    const { clientWidth, clientHeight } = selectionViewerCanvas.parentElement;
+    if (!clientWidth || !clientHeight) return;
+    renderer.setSize(clientWidth, clientHeight, false);
+    camera.aspect = clientWidth / clientHeight;
+    camera.updateProjectionMatrix();
+  };
+
+  selectionViewerState.resizeObserver = new ResizeObserver(resize);
+  selectionViewerState.resizeObserver.observe(selectionViewerCanvas.parentElement);
+  resize();
+
+  const animate = () => {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+  };
+  animate();
+}
+
+function clearSelectionViewerModel() {
+  const root = selectionViewerState.modelRoot;
+  if (!root) return;
+  for (const child of [...root.children]) {
+    root.remove(child);
+    if (child.geometry) child.geometry.dispose();
+    if (Array.isArray(child.material)) {
+      child.material.forEach((m) => m.dispose && m.dispose());
+    } else if (child.material && child.material.dispose) {
+      child.material.dispose();
+    }
+  }
+}
+
+function updateSelectionViewer(sourceMesh) {
+  ensureSelectionViewer();
+  clearSelectionViewerModel();
+  if (!sourceMesh || !selectionViewerState.modelRoot || !selectionViewerState.camera) return;
+
+  const geometry = sourceMesh.geometry.clone();
+  geometry.computeBoundingBox();
+  const bbox = geometry.boundingBox;
+  if (!bbox) return;
+
+  const center = new THREE.Vector3().addVectors(bbox.min, bbox.max).multiplyScalar(0.5);
+  geometry.translate(-center.x, -center.y, -center.z);
+
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xff6688,
+    roughness: 0.4,
+    metalness: 0.1,
+    transparent: true,
+    opacity: 0.95,
+  });
+  const previewMesh = new THREE.Mesh(geometry, material);
+  selectionViewerState.modelRoot.add(previewMesh);
+
+  // Draw a line along the longest axis as a visual cue for length.
+  const size = new THREE.Vector3().subVectors(bbox.max, bbox.min);
+  let dir = new THREE.Vector3(1, 0, 0);
+  if (size.y >= size.x && size.y >= size.z) dir.set(0, 1, 0);
+  else if (size.z >= size.x && size.z >= size.y) dir.set(0, 0, 1);
+  const half = Math.max(size.x, size.y, size.z) / 2 || 1;
+  const p1 = dir.clone().multiplyScalar(-half);
+  const p2 = dir.clone().multiplyScalar(half);
+  const lineGeom = new THREE.BufferGeometry().setFromPoints([p1, p2]);
+  const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff });
+  const line = new THREE.Line(lineGeom, lineMat);
+  selectionViewerState.modelRoot.add(line);
+
+  const radius = half * 2.5 || 2.5;
+  const camera = selectionViewerState.camera;
+  camera.position.set(radius, radius, radius);
+  camera.near = Math.max(radius / 100, 0.01);
+  camera.far = radius * 20;
+  camera.lookAt(0, 0, 0);
+  camera.updateProjectionMatrix();
 }
 
 function handleViewerClick(event) {
@@ -429,6 +540,7 @@ function handleViewerClick(event) {
   }
   const mesh = intersects[0].object;
   updateSelectionPanel(mesh.userData || null);
+  updateSelectionViewer(mesh);
 }
 
 function frameScene(bounds) {
