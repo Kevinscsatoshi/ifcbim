@@ -31,18 +31,6 @@ async def convert(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail="An unexpected error occurred during conversion.") from exc
 
 
-@router.post("/api/convert-dxf-to-dwg")
-async def convert_dxf_to_dwg(file: UploadFile = File(...)):
-    """Convert uploaded DXF to DWG. Requires ODA File Converter to be installed."""
-    try:
-        return await service.convert_dxf_to_dwg(file)
-    except ConversionError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    except Exception as exc:
-        logger.exception("DXF to DWG conversion failed")
-        raise HTTPException(status_code=500, detail="An unexpected error occurred.") from exc
-
-
 @router.get("/api/jobs/{job_id}")
 async def get_job(job_id: str):
     try:
@@ -73,7 +61,6 @@ async def download(
     media_type = {
         "ifc": "application/octet-stream",
         "dxf": "application/dxf",
-        "dwg": "application/acad",
     }.get(artifact, "application/octet-stream")
     return FileResponse(
         path,

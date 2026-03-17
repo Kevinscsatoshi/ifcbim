@@ -33,9 +33,9 @@
       <section class="masthead">
         <div class="masthead-copy">
           <p class="eyebrow" data-i18n="mastheadBrand">CAD2BIM Studio</p>
-          <h1 data-i18n="mastheadTitle">Turn DWG drafts into a live IFC scene.</h1>
+          <h1 data-i18n="mastheadTitle">Turn DXF drafts into a live IFC scene.</h1>
           <p class="lead" data-i18n="mastheadLead">
-            Upload a DWG or DXF, map CAD layers into IFC classes, export the IFC package,
+            Upload a DXF drawing, map CAD layers into IFC classes, export the IFC package,
             and inspect the generated 3D massing directly in the browser.
           </p>
         </div>
@@ -43,15 +43,8 @@
           <p class="eyebrow" data-i18n="eyebrowRuntime">Runtime</p>
           <div id="capability-status" class="capability-status" data-i18n="runtimeChecking">Checking runtime</div>
           <p id="capability-message" class="runtime-copy" data-i18n="runtimeMessage">
-            Inspecting DWG support, conversion tools, and upload limits.
+            Inspecting DXF support, conversion tools, and upload limits.
           </p>
-        </div>
-        <div id="oda-download-cta" class="oda-download-cta hidden" aria-live="polite">
-          <p class="oda-download-copy" data-i18n="odaCopy">DWG conversion requires ODA File Converter. Install it to enable DWG support.</p>
-          <div class="oda-download-actions">
-            <button id="oda-download-btn" class="ghost-button" type="button" data-i18n="odaDownload">Download ODA</button>
-            <button id="oda-installed-btn" class="ghost-button" type="button" data-i18n="odaInstalled">I've installed it</button>
-          </div>
         </div>
       </section>
 
@@ -62,8 +55,8 @@
             <h2 data-i18n="inputTitle">Drop a drawing file and generate the model.</h2>
             <form id="upload-form" class="upload-form">
               <label for="cad-file" id="dropzone" class="dropzone">
-                <input id="cad-file" name="file" type="file" accept=".dwg,.dxf" />
-                <span class="dropzone-title" data-i18n="dropzoneTitle">DWG / DXF ingestion</span>
+                <input id="cad-file" name="file" type="file" accept=".dxf" />
+                <span class="dropzone-title" data-i18n="dropzoneTitle">DXF ingestion</span>
                 <span class="dropzone-subtitle" data-i18n="dropzoneSubtitle">
                   Drag a file here or pick one from disk. IFC export stays downloadable. The BIM
                   experience moves into the live 3D viewer.
@@ -81,31 +74,7 @@
               </div>
             </form>
 
-            <section id="dxf-to-dwg-section" class="dxf-to-dwg-section">
-              <p class="eyebrow">DXF → DWG</p>
-              <h2 data-i18n="dxf2dwgTitle">Convert DXF to DWG</h2>
-              <p class="dxf-to-dwg-copy" data-i18n="dxf2dwgCopy">When only DXF is supported, conversion runs on your machine. Install ODA File Converter to upload DXF and download DWG here.</p>
-              <div id="dxf-to-dwg-cta" class="dxf-to-dwg-cta hidden">
-                <form id="dxf-to-dwg-form" class="dxf-to-dwg-form">
-                  <label for="dxf-to-dwg-file" class="dxf-to-dwg-dropzone">
-                    <input id="dxf-to-dwg-file" name="file" type="file" accept=".dxf" />
-                    <span data-i18n="chooseDxf">Choose DXF file</span>
-                  </label>
-                  <div class="file-picker-row">
-                    <span id="dxf-to-dwg-filename" class="selected-file-name" data-i18n="noFileChosen">No file chosen</span>
-                    <button id="dxf-to-dwg-submit" type="submit" class="ghost-button" disabled data-i18n="convertToDwg">Convert to DWG</button>
-                  </div>
-                </form>
-                <div id="dxf-to-dwg-result" class="dxf-to-dwg-result hidden">
-                  <p id="dxf-to-dwg-message"></p>
-                  <a id="dxf-to-dwg-download" class="ghost-button" href="#" data-i18n="downloadDwg">Download DWG</a>
-                </div>
-              </div>
-              <div id="dxf-to-dwg-no-oda" class="dxf-to-dwg-no-oda">
-                <p data-i18n="dxf2dwgNoOda">ODA File Converter is required to convert DXF to DWG.</p>
-                <button id="dxf-to-dwg-oda-btn" class="ghost-button" type="button" data-i18n="downloadOda">Download ODA</button>
-              </div>
-            </section>
+            <!-- DXF-only: DXF→DWG tools have been removed -->
           </section>
 
           <section class="dock-panel summary-panel">

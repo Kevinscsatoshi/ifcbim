@@ -9,28 +9,17 @@ const I18N = {
     eyebrowOutput: "Output Brief",
     eyebrowViewer: "Live Viewer",
     eyebrowBreakdown: "Mapping Breakdown",
-    mastheadTitle: "Turn DWG drafts into a live IFC scene.",
-    mastheadLead: "Upload a DWG or DXF, map CAD layers into IFC classes, export the IFC package, and inspect the generated 3D massing directly in the browser.",
+    mastheadTitle: "Turn DXF drafts into a live IFC scene.",
+    mastheadLead: "Upload a DXF drawing, map CAD layers into IFC classes, export the IFC package, and inspect the generated 3D massing directly in the browser.",
     runtimeChecking: "Checking runtime",
-    runtimeMessage: "Inspecting DWG support, conversion tools, and upload limits.",
-    odaCopy: "DWG conversion requires ODA File Converter. Install it to enable DWG support.",
-    odaDownload: "Download ODA",
-    odaInstalled: "I've installed it",
+    runtimeMessage: "Inspecting DXF support, conversion tools, and upload limits.",
     inputTitle: "Drop a drawing file and generate the model.",
-    dropzoneTitle: "DWG / DXF ingestion",
+    dropzoneTitle: "DXF ingestion",
     dropzoneSubtitle: "Drag a file here or pick one from disk. IFC export stays downloadable. The BIM experience moves into the live 3D viewer.",
     chooseFile: "Choose File",
     noFileSelected: "No file selected",
     generateModel: "Generate Model",
     statusWaiting: "Waiting for a drawing file.",
-    dxf2dwgTitle: "Convert DXF to DWG",
-    dxf2dwgCopy: "When only DXF is supported, conversion runs on your machine. Install ODA File Converter to upload DXF and download DWG here.",
-    chooseDxf: "Choose DXF file",
-    noFileChosen: "No file chosen",
-    convertToDwg: "Convert to DWG",
-    downloadDwg: "Download DWG",
-    dxf2dwgNoOda: "ODA File Converter is required to convert DXF to DWG.",
-    downloadOda: "Download ODA",
     outputEmptyTitle: "No model yet",
     outputEmptyCopy: "Once a conversion finishes, this rail shows the file summary, warnings, and IFC download links while the 3D scene opens on the right.",
     entities: "Entities",
@@ -48,14 +37,10 @@ const I18N = {
     viewerMetaDefault: "The browser view is generated from the same massing data used to author the IFC file.",
     breakdownTitle: "IFC class distribution",
     statusSelected: "Selected {name}",
-    statusChooseFirst: "Choose a DWG or DXF file first.",
-    statusDwgNotSupported: "DWG is not supported in this environment. Install ODA File Converter or upload DXF instead.",
+    statusChooseFirst: "Choose a DXF file first.",
     statusUploading: "Uploading file and generating IFC + live scene...",
     statusDone: "Conversion finished. The model is now live in the viewer.",
     conversionFailed: "Conversion failed.",
-    dwgAvailable: "DWG conversion is available. You can upload DWG for BIM conversion.",
-    dwgReady: "DWG Ready",
-    dxfOnly: "DXF Only",
     capabilityUnavailable: "Unavailable",
     capabilityDetectFailed: "Runtime capability detection failed, but you can still try a conversion.",
     viewerUnavailable: "Viewer unavailable",
@@ -65,8 +50,6 @@ const I18N = {
     downloadArtifact: "Download {name} · {filename}",
     converted: "Converted: {filename}",
     maxUpload: "Max upload",
-    statusConvertingDwg: "Converting DWG in browser…",
-    statusDwgConvertFailed: "Browser DWG conversion failed.",
   },
   ja: {
     mastheadBrand: "CAD2BIM Studio",
@@ -75,28 +58,17 @@ const I18N = {
     eyebrowOutput: "出力概要",
     eyebrowViewer: "ライブビューア",
     eyebrowBreakdown: "マッピング内訳",
-    mastheadTitle: "DWG 図面を IFC シーンに。",
-    mastheadLead: "DWG または DXF をアップロードし、CAD レイヤーを IFC クラスにマッピング。IFC をエクスポートし、ブラウザで 3D マッシングを確認できます。",
+    mastheadTitle: "DXF 図面を IFC シーンに。",
+    mastheadLead: "DXF をアップロードし、CAD レイヤーを IFC クラスにマッピング。IFC をエクスポートし、ブラウザで 3D マッシングを確認できます。",
     runtimeChecking: "ランタイム確認中",
-    runtimeMessage: "DWG 対応・変換ツール・アップロード上限を確認しています。",
-    odaCopy: "DWG 変換には ODA File Converter が必要です。インストールすると DWG に対応します。",
-    odaDownload: "ODA をダウンロード",
-    odaInstalled: "インストールしました",
+    runtimeMessage: "DXF 対応・変換ツール・アップロード上限を確認しています。",
     inputTitle: "図面ファイルをドロップしてモデルを生成",
-    dropzoneTitle: "DWG / DXF 取り込み",
-    dropzoneSubtitle: "ここにファイルをドラッグするか、ディスクから選択。IFC はダウンロード可能。BIM は 3D ビューアで確認できます。",
+    dropzoneTitle: "DXF 取り込み",
+    dropzoneSubtitle: "ここに DXF ファイルをドラッグするか、ディスクから選択。IFC はダウンロード可能。BIM は 3D ビューアで確認できます。",
     chooseFile: "ファイルを選択",
     noFileSelected: "ファイル未選択",
     generateModel: "モデルを生成",
-    statusWaiting: "図面ファイルを待機中です。",
-    dxf2dwgTitle: "DXF を DWG に変換",
-    dxf2dwgCopy: "DXF のみ対応の環境では、変換はお使いの環境で実行されます。ODA File Converter をインストールすると、ここで DXF をアップロードして DWG をダウンロードできます。",
-    chooseDxf: "DXF ファイルを選択",
-    noFileChosen: "ファイル未選択",
-    convertToDwg: "DWG に変換",
-    downloadDwg: "DWG をダウンロード",
-    dxf2dwgNoOda: "DXF を DWG に変換するには ODA File Converter が必要です。",
-    downloadOda: "ODA をダウンロード",
+    statusWaiting: "DXF 図面ファイルを待機中です。",
     outputEmptyTitle: "まだモデルがありません",
     outputEmptyCopy: "変換が完了すると、ここにファイル概要・警告・IFC ダウンロードリンクが表示され、右側に 3D シーンが開きます。",
     entities: "エンティティ",
@@ -114,14 +86,10 @@ const I18N = {
     viewerMetaDefault: "ブラウザ表示は IFC ファイルと同じマッシングデータから生成されています。",
     breakdownTitle: "IFC クラス内訳",
     statusSelected: "選択: {name}",
-    statusChooseFirst: "先に DWG または DXF ファイルを選択してください。",
-    statusDwgNotSupported: "この環境では DWG に対応していません。ODA File Converter をインストールするか、DXF をアップロードしてください。",
+    statusChooseFirst: "先に DXF ファイルを選択してください。",
     statusUploading: "アップロード中。IFC とライブシーンを生成しています...",
     statusDone: "変換が完了しました。ビューアでモデルを確認できます。",
     conversionFailed: "変換に失敗しました。",
-    dwgAvailable: "DWG 変換が利用可能です。DWG をアップロードして BIM 変換できます。",
-    dwgReady: "DWG 対応",
-    dxfOnly: "DXF のみ",
     capabilityUnavailable: "利用不可",
     capabilityDetectFailed: "ランタイムの検出に失敗しましたが、変換は試せます。",
     viewerUnavailable: "ビューア利用不可",
@@ -131,8 +99,8 @@ const I18N = {
     downloadArtifact: "ダウンロード {name} · {filename}",
     converted: "変換済み: {filename}",
     maxUpload: "最大アップロード",
-    statusConvertingDwg: "ブラウザで DWG を変換中…",
-    statusDwgConvertFailed: "ブラウザでの DWG 変換に失敗しました。",
+    statusConvertingDwg: "",
+    statusDwgConvertFailed: "",
   },
 };
 
@@ -196,74 +164,26 @@ const viewerLoading = document.getElementById("viewer-loading");
 const viewerMeta = document.getElementById("viewer-meta");
 const resetCameraButton = document.getElementById("reset-camera");
 const wireframeButton = document.getElementById("toggle-wireframe");
-const odaDownloadCta = document.getElementById("oda-download-cta");
-const odaDownloadBtn = document.getElementById("oda-download-btn");
-const odaInstalledBtn = document.getElementById("oda-installed-btn");
-const dxfToDwgSection = document.getElementById("dxf-to-dwg-section");
-const dxfToDwgCta = document.getElementById("dxf-to-dwg-cta");
-const dxfToDwgNoOda = document.getElementById("dxf-to-dwg-no-oda");
-const dxfToDwgForm = document.getElementById("dxf-to-dwg-form");
-const dxfToDwgFileInput = document.getElementById("dxf-to-dwg-file");
-const dxfToDwgFilename = document.getElementById("dxf-to-dwg-filename");
-const dxfToDwgSubmit = document.getElementById("dxf-to-dwg-submit");
-const dxfToDwgResult = document.getElementById("dxf-to-dwg-result");
-const dxfToDwgMessage = document.getElementById("dxf-to-dwg-message");
-const dxfToDwgDownload = document.getElementById("dxf-to-dwg-download");
-const dxfToDwgOdaBtn = document.getElementById("dxf-to-dwg-oda-btn");
+const odaDownloadCta = null;
+const odaDownloadBtn = null;
+const odaInstalledBtn = null;
+const dxfToDwgSection = null;
+const dxfToDwgCta = null;
+const dxfToDwgNoOda = null;
+const dxfToDwgForm = null;
+const dxfToDwgFileInput = null;
+const dxfToDwgFilename = null;
+const dxfToDwgSubmit = null;
+const dxfToDwgResult = null;
+const dxfToDwgMessage = null;
+const dxfToDwgDownload = null;
+const dxfToDwgOdaBtn = null;
 
-const ODA_DOWNLOAD_URL_FALLBACK = "https://www.opendesign.com/guestfiles/oda_file_converter";
-const WASM_BASE = "/static/wasm/libdxfrw";
+const ODA_DOWNLOAD_URL_FALLBACK = "";
 let lastCapabilities = null;
 let dwg2dxfModulePromise = null;
 
-/**
- * Load libdxfrw WASM module once (for browser DWG→DXF when ODA is not available).
- * The lib is UMD, so we load it via a script tag and use global createModule.
- * @returns {Promise<object>} Module with DRW_Database, DRW_FileHandler, DRW_Version, etc.
- */
-async function loadDwg2DxfModule() {
-  if (dwg2dxfModulePromise) return dwg2dxfModulePromise;
-  dwg2dxfModulePromise = new Promise((resolve, reject) => {
-    if (typeof window.createModule !== "undefined") {
-      window.createModule({ locateFile: (path) => `${WASM_BASE}/${path}` }).then(resolve).catch(reject);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = `${WASM_BASE}/libdxfrw.js`;
-    script.onload = () => {
-      window.createModule({ locateFile: (path) => `${WASM_BASE}/${path}` }).then(resolve).catch(reject);
-    };
-    script.onerror = () => reject(new Error("Failed to load DWG converter script"));
-    document.head.appendChild(script);
-  });
-  return dwg2dxfModulePromise;
-}
-
-/**
- * Convert DWG (ArrayBuffer) to DXF string in the browser using libdxfrw WASM.
- * Uses DRW_DwgR.read() for DWG (same as the lib demo); fileImport is not used for raw buffer.
- * @param {ArrayBuffer} dwgBuffer
- * @returns {Promise<string>} DXF file content (ASCII)
- */
-async function convertDwgToDxfInBrowser(dwgBuffer) {
-  const lib = await loadDwg2DxfModule();
-  const database = new lib.DRW_Database();
-  const fileHandler = new lib.DRW_FileHandler();
-  fileHandler.database = database;
-  let dwg = null;
-  try {
-    dwg = new lib.DRW_DwgR(dwgBuffer);
-    if (!dwg.read(fileHandler, false)) {
-      throw new Error("DWG read failed (unsupported version or invalid file)");
-    }
-    const dxfContent = fileHandler.fileExport(lib.DRW_Version.AC1021, false, database, false);
-    return dxfContent;
-  } finally {
-    if (dwg) dwg.delete();
-    database.delete();
-    fileHandler.delete();
-  }
-}
+// DWG is disabled in this deployment; browser DWG→DXF is no longer used.
 
 const viewerState = {
   renderer: null,
@@ -285,24 +205,8 @@ async function loadCapabilities() {
   const response = await fetch("/api/capabilities");
   const capabilities = await response.json();
   lastCapabilities = capabilities;
-  capabilityStatus.textContent = capabilities.dwg_enabled ? t("dwgReady") : t("dxfOnly");
+  capabilityStatus.textContent = t("dxfOnly");
   capabilityMessage.textContent = `${capabilities.dwg_message} ${t("maxUpload")}: ${capabilities.max_upload_mb}MB.`;
-  if (odaDownloadCta) {
-    if (capabilities.dwg_enabled) {
-      odaDownloadCta.classList.add("hidden");
-    } else {
-      odaDownloadCta.classList.remove("hidden");
-    }
-  }
-  if (dxfToDwgCta && dxfToDwgNoOda) {
-    if (capabilities.dwg_enabled) {
-      dxfToDwgCta.classList.remove("hidden");
-      dxfToDwgNoOda.classList.add("hidden");
-    } else {
-      dxfToDwgCta.classList.add("hidden");
-      dxfToDwgNoOda.classList.remove("hidden");
-    }
-  }
 }
 
 function pickFile(file) {
@@ -556,28 +460,7 @@ async function submitCurrentFile(event) {
     return;
   }
 
-  const isDwg = file.name.toLowerCase().endsWith(".dwg");
-  const useBrowserDwg = lastCapabilities && !lastCapabilities.dwg_enabled && isDwg;
-
   submitButton.disabled = true;
-
-  if (useBrowserDwg) {
-    setStatus(t("statusConvertingDwg"));
-    try {
-      const dwgBuffer = await file.arrayBuffer();
-      const dxfContent = await convertDwgToDxfInBrowser(dwgBuffer);
-      const dxfName = (file.name || "drawing.dwg").replace(/\.dwg$/i, ".dxf");
-      file = new File([dxfContent], dxfName, { type: "text/plain" });
-    } catch (err) {
-      setStatus(t("statusDwgConvertFailed") + " " + (err.message || ""));
-      if (odaDownloadCta) {
-        odaDownloadCta.classList.remove("hidden");
-        odaDownloadCta.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-      submitButton.disabled = false;
-      return;
-    }
-  }
 
   setStatus(t("statusUploading"));
 
@@ -628,7 +511,7 @@ dropzone.addEventListener("drop", (event) => {
 fileInput.addEventListener("change", () => {
   if (fileInput.files[0]) {
     selectedFileName.textContent = fileInput.files[0].name;
-    setStatus(`Selected ${fileInput.files[0].name}`);
+    setStatus(t("statusSelected", { name: fileInput.files[0].name }));
   }
 });
 
@@ -647,76 +530,11 @@ wireframeButton.addEventListener("click", () => {
 
 form.addEventListener("submit", submitCurrentFile);
 
-if (odaDownloadBtn) {
-  odaDownloadBtn.addEventListener("click", () => {
-    const url = lastCapabilities?.oda_download_url || ODA_DOWNLOAD_URL_FALLBACK;
-    window.open(url, "_blank", "noopener,noreferrer");
-  });
-}
-if (odaInstalledBtn) {
-  odaInstalledBtn.addEventListener("click", () => {
-    odaInstalledBtn.disabled = true;
-    loadCapabilities()
-      .then(() => {
-        if (lastCapabilities?.dwg_enabled) {
-          setStatus(t("dwgAvailable"));
-        }
-      })
-      .finally(() => {
-        odaInstalledBtn.disabled = false;
-      });
-  });
-}
-
-if (dxfToDwgFileInput) {
-  dxfToDwgFileInput.addEventListener("change", () => {
-    const file = dxfToDwgFileInput.files[0];
-    if (dxfToDwgFilename) dxfToDwgFilename.textContent = file ? file.name : t("noFileChosen");
-    if (dxfToDwgSubmit) dxfToDwgSubmit.disabled = !file;
-    if (dxfToDwgResult) dxfToDwgResult.classList.add("hidden");
-  });
-}
-
-if (dxfToDwgForm) {
-  dxfToDwgForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const file = dxfToDwgFileInput?.files[0];
-    if (!file) return;
-    dxfToDwgSubmit.disabled = true;
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const response = await fetch("/api/convert-dxf-to-dwg", { method: "POST", body: formData });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.detail || t("conversionFailed"));
-      if (dxfToDwgMessage) dxfToDwgMessage.textContent = t("converted", { filename: payload.filename });
-      if (dxfToDwgDownload) {
-        const url = payload.download_url + (payload.filename ? "?filename=" + encodeURIComponent(payload.filename) : "");
-        dxfToDwgDownload.href = url;
-        dxfToDwgDownload.download = payload.filename || "output.dwg";
-        dxfToDwgDownload.classList.remove("hidden");
-      }
-      if (dxfToDwgResult) dxfToDwgResult.classList.remove("hidden");
-    } catch (err) {
-      if (dxfToDwgMessage) dxfToDwgMessage.textContent = err.message;
-      if (dxfToDwgResult) dxfToDwgResult.classList.remove("hidden");
-      if (dxfToDwgDownload) dxfToDwgDownload.classList.add("hidden");
-    } finally {
-      dxfToDwgSubmit.disabled = false;
-    }
-  });
-}
-
-if (dxfToDwgOdaBtn) {
-  dxfToDwgOdaBtn.addEventListener("click", () => {
-    const url = lastCapabilities?.oda_download_url || ODA_DOWNLOAD_URL_FALLBACK;
-    window.open(url, "_blank", "noopener,noreferrer");
-  });
-}
+// DXF-only: DXF→DWG and ODA download controls are no longer wired.
 
 function refreshLangDependentUI() {
   if (lastCapabilities) {
-    capabilityStatus.textContent = lastCapabilities.dwg_enabled ? t("dwgReady") : t("dxfOnly");
+    capabilityStatus.textContent = t("dxfOnly");
     capabilityMessage.textContent = `${lastCapabilities.dwg_message} ${t("maxUpload")}: ${lastCapabilities.max_upload_mb}MB.`;
   }
   if (viewerState.modelRoot) applyWireframeState();
