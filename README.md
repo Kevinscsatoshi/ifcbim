@@ -27,7 +27,27 @@ The project uses `ezdxf.addons.odafc` for DWG normalization.
 
 If ODA is missing, the UI and API return a clear runtime message instead of failing silently.
 
+**Browser DWG conversion (e.g. Vercel)**: When the server does not have ODA (e.g. on Vercel), the app still accepts DWG: it converts DWG to DXF in the browser using WebAssembly ([libdxfrw-web](https://www.npmjs.com/package/@mlightcad/libdxfrw-web)), then uploads the DXF. No server-side ODA required. The WASM files are in `static/wasm/libdxfrw/`; after updating the dependency run `npm run copy-wasm`.
+
+**Online DWG conversion (server-side)**: To let the server convert DWG (no browser WASM step), deploy with Docker (see [Configure DWG in Docker](#configure-dwg-in-docker) below). See [DEPLOY.md](DEPLOY.md) for full steps (Docker, VPS, PaaS).
+
+### Configure DWG in Docker
+
+1. Download the **Linux DEB** package from [ODA File Converter](https://www.opendesign.com/guestfiles/oda_file_converter) (e.g. `ODAFileConverter_QT6_lnxX64_8.3dll_27.1.deb`; exact name may vary).
+2. Put the downloaded `.deb` file into the project folder **`docker/oda/`** (create the folder if needed).
+3. Build and run:
+   ```bash
+   docker build -t cad2bim .
+   docker run -p 8000:8000 cad2bim
+   ```
+   Or with Compose: `docker compose up -d`.
+4. Open http://localhost:8000 — the UI will show **DWG Ready** and accept DWG uploads.
+
+Do **not** set the `VERCEL` environment variable when running this image, or DWG conversion will be disabled. If you build without placing a `.deb` in `docker/oda/`, the app still runs but only DXF is supported.
+
 ## Supported files and limits
+
+Single-file DWG and DXF with multiple layers are fully supported: all layers are read, parsed, and mapped to IFC by layer name.
 
 ### DWG
 
@@ -43,7 +63,9 @@ If ODA is missing, the UI and API return a clear runtime message instead of fail
 
 ## Deploy to Vercel
 
-The app now includes Vercel deployment scaffolding:
+**Vercel and DWG**: The serverless runtime cannot run ODA. On Vercel, **DWG is still supported** by converting to DXF in the browser (WebAssembly) before upload; the app ships with the WASM in `static/wasm/libdxfrw/`. For server-side DWG conversion use Docker, a VPS, or a PaaS (see [DEPLOY.md](DEPLOY.md) and [Configure DWG in Docker](#configure-dwg-in-docker)).
+
+The app includes Vercel deployment scaffolding:
 
 - [api/index.py](/Users/satoshik/ifcbim/api/index.py) exports the FastAPI `app` as the Vercel serverless entrypoint
 - [vercel.json](/Users/satoshik/ifcbim/vercel.json) rewrites all requests into the FastAPI entrypoint

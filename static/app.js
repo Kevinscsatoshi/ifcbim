@@ -65,6 +65,8 @@ const I18N = {
     downloadArtifact: "Download {name} · {filename}",
     converted: "Converted: {filename}",
     maxUpload: "Max upload",
+    statusConvertingDwg: "Converting DWG in browser…",
+    statusDwgConvertFailed: "Browser DWG conversion failed.",
   },
   ja: {
     mastheadBrand: "CAD2BIM Studio",
@@ -129,6 +131,8 @@ const I18N = {
     downloadArtifact: "ダウンロード {name} · {filename}",
     converted: "変換済み: {filename}",
     maxUpload: "最大アップロード",
+    statusConvertingDwg: "ブラウザで DWG を変換中…",
+    statusDwgConvertFailed: "ブラウザでの DWG 変換に失敗しました。",
   },
 };
 
@@ -208,7 +212,54 @@ const dxfToDwgDownload = document.getElementById("dxf-to-dwg-download");
 const dxfToDwgOdaBtn = document.getElementById("dxf-to-dwg-oda-btn");
 
 const ODA_DOWNLOAD_URL_FALLBACK = "https://www.opendesign.com/guestfiles/oda_file_converter";
+const WASM_BASE = "/static/wasm/libdxfrw";
 let lastCapabilities = null;
+let dwg2dxfModulePromise = null;
+
+/**
+ * Load libdxfrw WASM module once (for browser DWG→DXF when ODA is not available).
+ * The lib is UMD, so we load it via a script tag and use global createModule.
+ * @returns {Promise<object>} Module with DRW_Database, DRW_FileHandler, DRW_Version, etc.
+ */
+async function loadDwg2DxfModule() {
+  if (dwg2dxfModulePromise) return dwg2dxfModulePromise;
+  dwg2dxfModulePromise = new Promise((resolve, reject) => {
+    if (typeof window.createModule !== "undefined") {
+      window.createModule({ locateFile: (path) => `${WASM_BASE}/${path}` }).then(resolve).catch(reject);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = `${WASM_BASE}/libdxfrw.js`;
+    script.onload = () => {
+      window.createModule({ locateFile: (path) => `${WASM_BASE}/${path}` }).then(resolve).catch(reject);
+    };
+    script.onerror = () => reject(new Error("Failed to load DWG converter script"));
+    document.head.appendChild(script);
+  });
+  return dwg2dxfModulePromise;
+}
+
+/**
+ * Convert DWG (ArrayBuffer) to DXF string in the browser using libdxfrw WASM.
+ * @param {ArrayBuffer} dwgBuffer
+ * @returns {Promise<string>} DXF file content (ASCII)
+ */
+async function convertDwgToDxfInBrowser(dwgBuffer) {
+  const lib = await loadDwg2DxfModule();
+  const database = new lib.DRW_Database();
+  const fileHandler = new lib.DRW_FileHandler();
+  fileHandler.database = database;
+  try {
+    if (!fileHandler.fileImport(dwgBuffer, database, false, false)) {
+      throw new Error("fileImport failed");
+    }
+    const dxfContent = fileHandler.fileExport(lib.DRW_Version.AC1021, false, database, false);
+    return dxfContent;
+  } finally {
+    database.delete();
+    fileHandler.delete();
+  }
+}
 
 const viewerState = {
   renderer: null,
@@ -495,25 +546,35 @@ async function loadViewer(viewerUrl, inlineScene = null) {
 
 async function submitCurrentFile(event) {
   event.preventDefault();
-  const file = fileInput.files[0];
+  let file = fileInput.files[0];
   if (!file) {
     setStatus(t("statusChooseFirst"));
     return;
   }
-  if (
-    lastCapabilities &&
-    !lastCapabilities.dwg_enabled &&
-    file.name.toLowerCase().endsWith(".dwg")
-  ) {
-    setStatus(t("statusDwgNotSupported"));
-    if (odaDownloadCta) {
-      odaDownloadCta.classList.remove("hidden");
-      odaDownloadCta.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-    return;
-  }
+
+  const isDwg = file.name.toLowerCase().endsWith(".dwg");
+  const useBrowserDwg = lastCapabilities && !lastCapabilities.dwg_enabled && isDwg;
 
   submitButton.disabled = true;
+
+  if (useBrowserDwg) {
+    setStatus(t("statusConvertingDwg"));
+    try {
+      const dwgBuffer = await file.arrayBuffer();
+      const dxfContent = await convertDwgToDxfInBrowser(dwgBuffer);
+      const dxfName = (file.name || "drawing.dwg").replace(/\.dwg$/i, ".dxf");
+      file = new File([dxfContent], dxfName, { type: "text/plain" });
+    } catch (err) {
+      setStatus(t("statusDwgConvertFailed") + " " + (err.message || ""));
+      if (odaDownloadCta) {
+        odaDownloadCta.classList.remove("hidden");
+        odaDownloadCta.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      submitButton.disabled = false;
+      return;
+    }
+  }
+
   setStatus(t("statusUploading"));
 
   const formData = new FormData();

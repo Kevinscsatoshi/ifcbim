@@ -1,0 +1,28 @@
+{
+  "name": "ifcbim",
+  "version": "1.0.0",
+  "description": "Upload a `DWG` or `DXF` file and generate:",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy-wasm": "mkdir -p static/wasm/libdxfrw && cp node_modules/@mlightcad/libdxfrw-web/dist/libdxfrw.js node_modules/@mlightcad/libdxfrw-web/dist/libdxfrw.wasm static/wasm/libdxfrw/ 2>/dev/null || true"
+  },
+  "dependencies": {
+    "@mlightcad/libdxfrw-web": "^0.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kevinscsatoshi/ifcbim.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Kevinscsatoshi/ifcbim/issues"
+  },
+  "homepage": "https://github.com/Kevinscsatoshi/ifcbim#readme"
+}
