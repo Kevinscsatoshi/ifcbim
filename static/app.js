@@ -621,7 +621,12 @@ function handleViewerClick(event) {
   const meshesForElement =
     elementId == null
       ? [hit]
-      : viewerState.modelRoot.children.filter((child) => child.userData?.elementId === elementId);
+      : viewerState.modelRoot.children.filter(
+          (child) =>
+            child.visible &&
+            child.userData &&
+            child.userData.elementId === elementId,
+        );
   const primaryMesh = meshesForElement[0] || hit;
 
   updateSelectionPanel(primaryMesh.userData || null);
@@ -641,7 +646,10 @@ function updateViewerHighlight(meshes) {
       child.material.dispose();
     }
   }
-  const list = Array.isArray(meshes) ? meshes : [meshes];
+  const list = Array.isArray(meshes) ? meshes.filter(Boolean) : meshes ? [meshes] : [];
+  if (!list.length) {
+    return;
+  }
   list.forEach((sourceMesh) => {
     if (!sourceMesh || !sourceMesh.geometry) return;
     const geom = sourceMesh.geometry.clone();
