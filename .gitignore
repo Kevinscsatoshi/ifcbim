@@ -1,0 +1,12 @@
+.vercel
+dist
+.env
+.venv
+.playwright-cli
+data
+output
+__pycache__
+*.pyc
+.pytest_cache
+.coverage
+htmlcov

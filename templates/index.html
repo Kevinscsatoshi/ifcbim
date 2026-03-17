@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CAD2BIM Studio</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232b221d'/%3E%3Cpath d='M14 42V22l18-10 18 10v20L32 52 14 42Z' fill='%23d46834'/%3E%3Cpath d='M32 22 22 28v10l10 6 10-6V28l-10-6Z' fill='%23f7efe5'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Instrument+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="lab-shell">
+      <section class="masthead">
+        <div class="masthead-copy">
+          <p class="eyebrow">CAD2BIM Studio</p>
+          <h1>Turn DWG drafts into a live IFC scene.</h1>
+          <p class="lead">
+            Upload a DWG or DXF, map CAD layers into IFC classes, export the IFC package,
+            and inspect the generated 3D massing directly in the browser.
+          </p>
+        </div>
+        <div class="runtime-card">
+          <p class="eyebrow">Runtime</p>
+          <div id="capability-status" class="capability-status">Checking runtime</div>
+          <p id="capability-message" class="runtime-copy">
+            Inspecting DWG support, conversion tools, and upload limits.
+          </p>
+        </div>
+        <div id="oda-download-cta" class="oda-download-cta hidden" aria-live="polite">
+          <p class="oda-download-copy">要转换 DWG 需要先安装 ODA File Converter。</p>
+          <div class="oda-download-actions">
+            <button id="oda-download-btn" class="ghost-button" type="button">前往下载 ODA</button>
+            <button id="oda-installed-btn" class="ghost-button" type="button">我已安装</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="interface-grid">
+        <aside class="control-column">
+          <section class="dock-panel upload-panel">
+            <p class="eyebrow">Input</p>
+            <h2>Drop a drawing file and generate the model.</h2>
+            <form id="upload-form" class="upload-form">
+              <label for="cad-file" id="dropzone" class="dropzone">
+                <input id="cad-file" name="file" type="file" accept=".dwg,.dxf" />
+                <span class="dropzone-title">DWG / DXF ingestion</span>
+                <span class="dropzone-subtitle">
+                  Drag a file here or pick one from disk. IFC export stays downloadable. The BIM
+                  experience moves into the live 3D viewer.
+                </span>
+              </label>
+              <div class="file-picker-row">
+                <button id="choose-file" class="ghost-button choose-file-button" type="button">
+                  Choose File
+                </button>
+                <p id="selected-file-name" class="selected-file-name">No file selected</p>
+              </div>
+              <div class="action-row">
+                <button id="submit-button" type="submit">Generate Model</button>
+                <p id="status-text" class="status-text">Waiting for a drawing file.</p>
+              </div>
+            </form>
+          </section>
+
+          <section class="dock-panel summary-panel">
+            <p class="eyebrow">Output Brief</p>
+            <div id="result-empty" class="result-empty">
+              <h3>No model yet</h3>
+              <p>
+                Once a conversion finishes, this rail shows the file summary, warnings, and IFC
+                download links while the 3D scene opens on the right.
+              </p>
+            </div>
+
+            <div id="result-view" class="result-view hidden">
+              <div class="result-topline">
+                <div>
+                  <p id="result-filename" class="result-filename"></p>
+                  <p id="result-meta" class="result-meta"></p>
+                </div>
+                <span id="result-pill" class="result-pill">completed</span>
+              </div>
+
+              <div class="stats-grid">
+                <article>
+                  <span>Entities</span>
+                  <strong id="entity-count">0</strong>
+                </article>
+                <article>
+                  <span>Layers</span>
+                  <strong id="layer-count">0</strong>
+                </article>
+                <article>
+                  <span>IFC Elements</span>
+                  <strong id="ifc-count">0</strong>
+                </article>
+                <article>
+                  <span>Skipped</span>
+                  <strong id="skipped-count">0</strong>
+                </article>
+              </div>
+
+              <div id="artifact-links" class="download-bar"></div>
+              <div id="warning-list" class="warning-list"></div>
+            </div>
+          </section>
+        </aside>
+
+        <section class="viewer-column">
+          <div class="viewer-stage">
+            <div class="viewer-head">
+              <div>
+                <p class="eyebrow">Live Viewer</p>
+                <h2>Online 3D inspection</h2>
+              </div>
+              <div class="viewer-toolbar">
+                <button id="reset-camera" class="ghost-button" type="button">Reset Camera</button>
+                <button id="toggle-wireframe" class="ghost-button" type="button">Wireframe</button>
+              </div>
+            </div>
+
+            <div id="viewer-shell" class="viewer-shell">
+              <canvas id="viewer-canvas"></canvas>
+              <div id="viewer-empty" class="viewer-empty">
+                <p class="viewer-label">Scene idle</p>
+                <h3>Your generated model will appear here.</h3>
+                <p>Orbit, pan, and zoom the scene after conversion. No BIM download step required.</p>
+              </div>
+              <div id="viewer-loading" class="viewer-loading hidden">Building scene...</div>
+            </div>
+
+            <div class="viewer-footer">
+              <p id="viewer-meta" class="viewer-meta">
+                The browser view is generated from the same massing data used to author the IFC file.
+              </p>
+            </div>
+          </div>
+
+          <div class="breakdown-panel">
+            <div class="panel-heading">
+              <p class="eyebrow">Mapping Breakdown</p>
+              <h2>IFC class distribution</h2>
+            </div>
+            <div id="class-counts" class="class-counts"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+# CAD2BIM Studio - 全线上部署（支持 DWG）
+# 使用：在项目根目录执行  docker compose up -d
+# 访问 http://localhost:8000
+# 注意：不要设置 VERCEL，否则会禁用 DWG 转换。
+
+services:
+  app:
+    build: .
+    image: cad2bim
+    ports:
+      - "8000:8000"
+    # 可选：持久化转换任务目录，便于保留 job 输出
+    volumes:
+      - cad2bim_jobs:/app/data/jobs
+    env_file: .env
+    environment:
+      # 不设置 VERCEL，以启用 DWG 转换
+      - CAD2BIM_JOB_DIR=/app/data/jobs
+      # 若 ODA 不在 PATH，可指定可执行文件路径（可选）
+      # - ODA_FILE_CONVERTER_PATH=/usr/bin/ODAFileConverter
+    restart: unless-stopped
+
+volumes:
+  cad2bim_jobs:

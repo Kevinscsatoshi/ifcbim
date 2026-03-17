@@ -1,0 +1,10 @@
+.git
+.gitignore
+.playwright-cli
+.venv
+__pycache__
+*.pyc
+data/jobs
+output
+sample_data
+tests

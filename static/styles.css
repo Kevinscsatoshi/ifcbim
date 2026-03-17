@@ -1,0 +1,556 @@
+:root {
+  color-scheme: light;
+  --bg: oklch(0.95 0.015 80);
+  --surface: oklch(0.985 0.01 82);
+  --surface-strong: oklch(0.9 0.03 80);
+  --ink: oklch(0.25 0.03 50);
+  --muted: oklch(0.5 0.025 52);
+  --accent: oklch(0.65 0.18 42);
+  --accent-dark: oklch(0.52 0.16 38);
+  --teal: oklch(0.72 0.1 190);
+  --line: color-mix(in oklab, var(--ink) 14%, transparent);
+  --shadow: 0 30px 80px color-mix(in oklab, var(--ink) 10%, transparent);
+  --radius-lg: 32px;
+  --radius-md: 22px;
+  --viewer-bg: oklch(0.18 0.02 250);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-size: clamp(14px, 0.3vw + 13px, 16px);
+  font-family: "Instrument Sans", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top right, color-mix(in oklab, var(--accent) 12%, transparent), transparent 26%),
+    linear-gradient(180deg, color-mix(in oklab, var(--bg) 88%, white), var(--bg));
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 95px,
+      color-mix(in oklab, var(--accent) 8%, transparent) 95px,
+      color-mix(in oklab, var(--accent) 8%, transparent) 96px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 95px,
+      color-mix(in oklab, var(--teal) 6%, transparent) 95px,
+      color-mix(in oklab, var(--teal) 6%, transparent) 96px
+    );
+  pointer-events: none;
+  opacity: 0.42;
+}
+
+.lab-shell {
+  width: min(1380px, calc(100vw - 2rem));
+  margin: 0 auto;
+  padding: clamp(1.2rem, 2vw, 2rem) 0 2.6rem;
+  position: relative;
+}
+
+.masthead,
+.interface-grid {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.masthead {
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.72fr);
+  align-items: stretch;
+}
+
+.eyebrow {
+  margin: 0 0 0.65rem;
+  font-size: 0.76rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: "Bricolage Grotesque", sans-serif;
+  line-height: 0.96;
+}
+
+h1 {
+  max-width: 10ch;
+  font-size: clamp(2.6rem, 4.8vw, 4.8rem);
+}
+
+h2 {
+  font-size: clamp(1.4rem, 2.2vw, 2.05rem);
+}
+
+h3 {
+  font-size: clamp(1.05rem, 1.45vw, 1.35rem);
+}
+
+.lead,
+.runtime-copy,
+.status-text,
+.result-meta,
+.viewer-meta,
+.result-empty p,
+.viewer-empty p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.masthead-copy,
+.runtime-card,
+.dock-panel,
+.viewer-stage,
+.breakdown-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--surface) 90%, white);
+  box-shadow: var(--shadow);
+}
+
+.masthead-copy,
+.dock-panel,
+.viewer-stage,
+.breakdown-panel {
+  padding: clamp(1.3rem, 2vw, 2rem);
+}
+
+.masthead-copy::after,
+.dock-panel::after,
+.viewer-stage::after,
+.breakdown-panel::after,
+.runtime-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -30% auto;
+  width: 260px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in oklab, var(--accent) 16%, transparent), transparent 72%);
+  pointer-events: none;
+}
+
+.lead {
+  max-width: 58ch;
+  margin-top: 1rem;
+  font-size: 0.96rem;
+}
+
+.runtime-card {
+  padding: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.oda-download-cta {
+  padding: 1rem 1.3rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--surface-strong) 40%, white);
+}
+
+.oda-download-cta.hidden {
+  display: none;
+}
+
+.oda-download-copy {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.oda-download-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.capability-status {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: 0.4rem;
+  padding: 0.56rem 0.88rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--accent) 18%, white);
+  color: color-mix(in oklab, var(--accent-dark) 78%, black);
+  font-weight: 700;
+}
+
+.interface-grid {
+  grid-template-columns: minmax(330px, 0.74fr) minmax(0, 1.26fr);
+  margin-top: 1.2rem;
+}
+
+.control-column,
+.viewer-column {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.upload-form {
+  margin-top: 1.35rem;
+}
+
+.dropzone {
+  display: grid;
+  gap: 0.55rem;
+  min-height: 220px;
+  padding: 1.2rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed color-mix(in oklab, var(--accent) 55%, var(--line));
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--accent) 10%, white), transparent 62%),
+    linear-gradient(180deg, color-mix(in oklab, var(--surface-strong) 26%, white), white);
+  place-content: center;
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.dropzone:hover,
+.dropzone.is-dragging {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--accent) 80%, var(--line));
+}
+
+.dropzone input {
+  display: none;
+}
+
+.dropzone-title {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: clamp(1.28rem, 2vw, 1.72rem);
+}
+
+.dropzone-subtitle {
+  max-width: 36ch;
+  font-size: 0.93rem;
+  color: var(--muted);
+}
+
+.file-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 0.9rem;
+}
+
+.choose-file-button {
+  flex: 0 0 auto;
+  padding: 0.8rem 1.15rem;
+}
+
+.selected-file-name {
+  margin: 0;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.action-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+button {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.95rem 1.35rem;
+  font: inherit;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent-dark) 85%, black), var(--accent));
+  box-shadow: 0 16px 32px color-mix(in oklab, var(--accent) 24%, transparent);
+  cursor: pointer;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  opacity: 0.68;
+  cursor: wait;
+}
+
+.ghost-button {
+  color: var(--ink);
+  background: color-mix(in oklab, var(--surface-strong) 38%, white);
+  box-shadow: none;
+  border: 1px solid color-mix(in oklab, var(--viewer-bg) 16%, transparent);
+}
+
+.result-empty,
+.result-view {
+  margin-top: 0.8rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.result-topline,
+.viewer-head,
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.result-filename {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.result-pill {
+  padding: 0.46rem 0.76rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--teal) 16%, white);
+  color: color-mix(in oklab, var(--viewer-bg) 52%, black);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.stats-grid article {
+  padding: 0.95rem 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: color-mix(in oklab, var(--surface-strong) 35%, white);
+}
+
+.stats-grid span {
+  display: block;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.stats-grid strong {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+}
+
+.download-bar,
+.warning-list,
+.class-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.download-bar {
+  margin-top: 1rem;
+}
+
+.download-bar a,
+.warning-list p,
+.class-pill {
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  padding: 0.66rem 0.9rem;
+}
+
+.download-bar a {
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 600;
+  background: white;
+}
+
+.warning-list {
+  margin-top: 0.9rem;
+}
+
+.warning-list p {
+  margin: 0;
+  background: color-mix(in oklab, var(--accent) 9%, white);
+}
+
+.viewer-stage {
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--surface) 82%, white), color-mix(in oklab, var(--surface) 94%, white));
+}
+
+.viewer-toolbar {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.viewer-shell {
+  position: relative;
+  margin-top: 1rem;
+  min-height: min(68vh, 760px);
+  border-radius: 28px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top, color-mix(in oklab, var(--teal) 18%, transparent), transparent 30%),
+    linear-gradient(180deg, color-mix(in oklab, var(--viewer-bg) 88%, black), var(--viewer-bg));
+  border: 1px solid color-mix(in oklab, var(--viewer-bg) 22%, transparent);
+}
+
+.viewer-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 79px,
+      color-mix(in oklab, white 7%, transparent) 79px,
+      color-mix(in oklab, white 7%, transparent) 80px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 79px,
+      color-mix(in oklab, white 5%, transparent) 79px,
+      color-mix(in oklab, white 5%, transparent) 80px
+    );
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+#viewer-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.viewer-empty,
+.viewer-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 2rem;
+  z-index: 2;
+}
+
+.viewer-empty {
+  color: color-mix(in oklab, white 76%, var(--teal));
+}
+
+.viewer-label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  color: color-mix(in oklab, white 55%, var(--teal));
+}
+
+.viewer-empty h3 {
+  margin-top: 0.75rem;
+  color: white;
+}
+
+.viewer-loading {
+  background: color-mix(in oklab, var(--viewer-bg) 72%, transparent);
+  color: white;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.viewer-footer {
+  margin-top: 0.9rem;
+}
+
+.viewer-meta {
+  font-size: 0.94rem;
+}
+
+.breakdown-panel {
+  padding: 1.3rem;
+}
+
+.class-counts {
+  margin-top: 1rem;
+}
+
+.class-pill {
+  background: color-mix(in oklab, var(--surface-strong) 38%, white);
+  font-weight: 600;
+}
+
+@media (max-width: 1120px) {
+  .masthead,
+  .interface-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .viewer-shell {
+    min-height: 520px;
+  }
+}
+
+@media (max-width: 720px) {
+  .lab-shell {
+    width: min(100vw - 1rem, 1380px);
+  }
+
+  .result-topline,
+  .viewer-head,
+  .panel-heading,
+  .file-picker-row,
+  .action-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .selected-file-name {
+    white-space: normal;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .viewer-shell {
+    min-height: 420px;
+  }
+}
