@@ -1,18 +1,19 @@
 :root {
   color-scheme: light;
-  --bg: oklch(0.95 0.015 80);
-  --surface: oklch(0.985 0.01 82);
-  --surface-strong: oklch(0.9 0.03 80);
-  --ink: oklch(0.25 0.03 50);
-  --muted: oklch(0.5 0.025 52);
-  --accent: oklch(0.65 0.18 42);
-  --accent-dark: oklch(0.52 0.16 38);
-  --teal: oklch(0.72 0.1 190);
+  /* Light neutral background with blue primary accents (Modely-style) */
+  --bg: oklch(0.98 0.01 250);
+  --surface: oklch(0.99 0.01 250);
+  --surface-strong: oklch(0.96 0.02 250);
+  --ink: oklch(0.26 0.04 260);
+  --muted: oklch(0.58 0.03 250);
+  --accent: oklch(0.68 0.12 250);
+  --accent-dark: oklch(0.55 0.13 250);
+  --teal: oklch(0.74 0.08 220);
   --line: color-mix(in oklab, var(--ink) 14%, transparent);
   --shadow: 0 30px 80px color-mix(in oklab, var(--ink) 10%, transparent);
   --radius-lg: 32px;
   --radius-md: 22px;
-  --viewer-bg: oklch(0.18 0.02 250);
+  --viewer-bg: oklch(0.2 0.04 250);
 }
 
 * {
