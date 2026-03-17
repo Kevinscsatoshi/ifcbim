@@ -105,6 +105,7 @@ body::before {
 .masthead {
   grid-template-columns: minmax(0, 1fr);
   align-items: flex-start;
+  justify-content: flex-start;
 }
 
 .eyebrow {
@@ -165,6 +166,11 @@ h3 {
 .viewer-stage,
 .breakdown-panel {
   padding: clamp(0.85rem, 1.4vw, 1.4rem);
+}
+
+.masthead-copy {
+  max-width: 860px;
+  margin-right: auto;
 }
 
 .masthead-copy::after,
