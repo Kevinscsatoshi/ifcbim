@@ -629,15 +629,21 @@ function handleViewerClick(event) {
 
   const hit = intersects[0].object;
   const elementId = hit.userData?.elementId;
-  const meshesForElement =
-    elementId == null
-      ? [hit]
-      : viewerState.modelRoot.children.filter(
-          (child) =>
-            child.visible &&
-            child.userData &&
-            child.userData.elementId === elementId,
-        );
+  let meshesForElement;
+  if (viewerState.activeLayer != null) {
+    // When a layer filter is active, only highlight the exact mesh that was clicked.
+    meshesForElement = [hit];
+  } else {
+    meshesForElement =
+      elementId == null
+        ? [hit]
+        : viewerState.modelRoot.children.filter(
+            (child) =>
+              child.visible &&
+              child.userData &&
+              child.userData.elementId === elementId,
+          );
+  }
   const primaryMesh = meshesForElement[0] || hit;
 
   updateSelectionPanel(primaryMesh.userData || null);
