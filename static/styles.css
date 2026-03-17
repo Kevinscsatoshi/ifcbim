@@ -598,6 +598,26 @@ button:disabled {
   font-size: 0.94rem;
 }
 
+.selection-panel {
+  margin-top: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: color-mix(in oklab, var(--surface-strong) 40%, white);
+}
+
+.selection-title {
+  margin: 0 0 0.35rem;
+  font-weight: 600;
+}
+
+.selection-meta,
+.selection-extra {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
 .breakdown-panel {
   padding: 1.3rem;
 }

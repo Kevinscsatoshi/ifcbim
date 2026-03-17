@@ -157,6 +157,9 @@ class IfcBuilder:
                     "entity_type": entity.entity_type,
                     "geometry_strategy": geometry_strategy,
                     "material": material_name,
+                    "length_m": round(entity.length * unit_factor, 4),
+                    "text_content": entity.text_content,
+                    "block_name": entity.block_name,
                 }
             )
             viewer_elements.append(
@@ -166,6 +169,10 @@ class IfcBuilder:
                     "layer": entity.layer,
                     "material": material_name,
                     "color": self._viewer_color(ifc_class),
+                    "length_m": round(entity.length * unit_factor, 4),
+                    "text_content": entity.text_content,
+                    "entity_type": entity.entity_type,
+                    "block_name": entity.block_name,
                     "mesh_items": [self._serialize_mesh(mesh) for mesh in meshes],
                 }
             )

@@ -47,6 +47,12 @@ const I18N = {
     sceneFailed: "Scene generation did not complete.",
     fetchingGeometry: "Fetching viewer geometry...",
     elementsVisible: "{count} IFC elements are visible in-browser. Drag to orbit, scroll to zoom.",
+    selectionEyebrow: "Selection",
+    selectionEmptyTitle: "Click a 3D element to inspect its DXF data.",
+    selectionLength: "Length",
+    selectionText: "Text",
+    selectionLayer: "Layer",
+    selectionClass: "IFC Class",
     downloadArtifact: "Download {name} · {filename}",
     converted: "Converted: {filename}",
     maxUpload: "Max upload",
@@ -96,11 +102,15 @@ const I18N = {
     sceneFailed: "シーン生成が完了しませんでした。",
     fetchingGeometry: "ビューアジオメトリ取得中...",
     elementsVisible: "ブラウザに {count} 個の IFC 要素を表示中。ドラッグで回転、スクロールでズーム。",
+    selectionEyebrow: "選択中の要素",
+    selectionEmptyTitle: "3D 要素をクリックすると DXF 情報を表示します。",
+    selectionLength: "長さ",
+    selectionText: "テキスト",
+    selectionLayer: "レイヤー",
+    selectionClass: "IFC クラス",
     downloadArtifact: "ダウンロード {name} · {filename}",
     converted: "変換済み: {filename}",
     maxUpload: "最大アップロード",
-    statusConvertingDwg: "",
-    statusDwgConvertFailed: "",
   },
 };
 
@@ -162,6 +172,10 @@ const viewerCanvas = document.getElementById("viewer-canvas");
 const viewerEmpty = document.getElementById("viewer-empty");
 const viewerLoading = document.getElementById("viewer-loading");
 const viewerMeta = document.getElementById("viewer-meta");
+const selectionPanel = document.getElementById("selection-panel");
+const selectionTitle = document.getElementById("selection-title");
+const selectionMeta = document.getElementById("selection-meta");
+const selectionExtra = document.getElementById("selection-extra");
 const resetCameraButton = document.getElementById("reset-camera");
 const wireframeButton = document.getElementById("toggle-wireframe");
 const odaDownloadCta = null;
@@ -195,6 +209,8 @@ const viewerState = {
   resizeObserver: null,
   currentBounds: null,
   wireframe: false,
+  raycaster: new THREE.Raycaster(),
+  pointer: new THREE.Vector2(),
 };
 
 function setStatus(message) {
@@ -373,6 +389,48 @@ function applyWireframeState() {
   wireframeButton.textContent = viewerState.wireframe ? t("solid") : t("wireframe");
 }
 
+function updateSelectionPanel(info) {
+  if (!selectionPanel || !selectionTitle || !selectionMeta || !selectionExtra) return;
+  if (!info) {
+    selectionPanel.classList.add("hidden");
+    selectionTitle.textContent = t("selectionEmptyTitle");
+    selectionMeta.textContent = "";
+    selectionExtra.textContent = "";
+    return;
+  }
+  const title = info.name || info.ifcClass || "";
+  selectionTitle.textContent = title || t("selectionEmptyTitle");
+  const metaParts = [];
+  if (info.ifcClass) metaParts.push(`${t("selectionClass")}: ${info.ifcClass}`);
+  if (info.layer) metaParts.push(`${t("selectionLayer")}: ${info.layer}`);
+  selectionMeta.textContent = metaParts.join(" · ");
+  const extraParts = [];
+  if (typeof info.length === "number" && info.length > 0) {
+    extraParts.push(`${t("selectionLength")}: ${info.length.toFixed(3)} m`);
+  }
+  if (info.text) {
+    extraParts.push(`${t("selectionText")}: ${info.text}`);
+  }
+  selectionExtra.textContent = extraParts.join(" · ");
+  selectionPanel.classList.remove("hidden");
+}
+
+function handleViewerClick(event) {
+  if (!viewerState.camera || !viewerState.modelRoot) return;
+  const rect = viewerCanvas.getBoundingClientRect();
+  const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  viewerState.pointer.set(x, y);
+  viewerState.raycaster.setFromCamera(viewerState.pointer, viewerState.camera);
+  const intersects = viewerState.raycaster.intersectObjects(viewerState.modelRoot.children, true);
+  if (!intersects.length) {
+    updateSelectionPanel(null);
+    return;
+  }
+  const mesh = intersects[0].object;
+  updateSelectionPanel(mesh.userData || null);
+}
+
 function frameScene(bounds) {
   if (!bounds || !viewerState.camera || !viewerState.controls) {
     return;
@@ -409,6 +467,10 @@ function renderViewerScene(payload) {
         name: element.name,
         ifcClass: element.ifc_class,
         layer: element.layer,
+        length: element.length_m,
+        text: element.text_content,
+        entityType: element.entity_type,
+        blockName: element.block_name,
       };
       viewerState.modelRoot.add(mesh);
     });
@@ -527,6 +589,8 @@ wireframeButton.addEventListener("click", () => {
   viewerState.wireframe = !viewerState.wireframe;
   applyWireframeState();
 });
+
+viewerCanvas.addEventListener("click", handleViewerClick);
 
 form.addEventListener("submit", submitCurrentFile);
 
