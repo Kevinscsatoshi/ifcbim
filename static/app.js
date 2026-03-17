@@ -62,6 +62,7 @@ const I18N = {
     downloadArtifact: "Download {name} · {filename}",
     converted: "Converted: {filename}",
     maxUpload: "Max upload",
+    dxfOnly: "DXF only",
   },
   ja: {
     mastheadBrand: "CAD2BIM Studio",
@@ -123,6 +124,7 @@ const I18N = {
     downloadArtifact: "ダウンロード {name} · {filename}",
     converted: "変換済み: {filename}",
     maxUpload: "最大アップロード",
+    dxfOnly: "DXF 専用",
   },
 };
 
@@ -192,26 +194,8 @@ const selectionViewerCanvas = document.getElementById("selection-viewer-canvas")
 const resetCameraButton = document.getElementById("reset-camera");
 const wireframeButton = document.getElementById("toggle-wireframe");
 const layerFilterBar = document.getElementById("layer-filter-bar");
-const odaDownloadCta = null;
-const odaDownloadBtn = null;
-const odaInstalledBtn = null;
-const dxfToDwgSection = null;
-const dxfToDwgCta = null;
-const dxfToDwgNoOda = null;
-const dxfToDwgForm = null;
-const dxfToDwgFileInput = null;
-const dxfToDwgFilename = null;
-const dxfToDwgSubmit = null;
-const dxfToDwgResult = null;
-const dxfToDwgMessage = null;
-const dxfToDwgDownload = null;
-const dxfToDwgOdaBtn = null;
 
-const ODA_DOWNLOAD_URL_FALLBACK = "";
 let lastCapabilities = null;
-let dwg2dxfModulePromise = null;
-
-// DWG is disabled in this deployment; browser DWG→DXF is no longer used.
 
 const viewerState = {
   renderer: null,
@@ -859,7 +843,7 @@ viewerCanvas.addEventListener("click", handleViewerClick);
 
 form.addEventListener("submit", submitCurrentFile);
 
-// DXF-only: DXF→DWG and ODA download controls are no longer wired.
+// DXF-only deployment: no DWG or ODA-related controls remain.
 
 function refreshLangDependentUI() {
   if (lastCapabilities) {
