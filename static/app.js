@@ -206,6 +206,7 @@ const viewerState = {
   camera: null,
   controls: null,
   modelRoot: null,
+  highlightRoot: null,
   animationFrame: null,
   resizeObserver: null,
   currentBounds: null,
@@ -324,6 +325,8 @@ function ensureViewer() {
   viewerState.camera = camera;
   viewerState.controls = controls;
   viewerState.modelRoot = modelRoot;
+  viewerState.highlightRoot = new THREE.Group();
+  scene.add(viewerState.highlightRoot);
 
   const resize = () => {
     const { clientWidth, clientHeight } = viewerCanvas.parentElement;
@@ -357,6 +360,17 @@ function clearViewerModel() {
       child.material.forEach((material) => material.dispose());
     } else if (child.material) {
       child.material.dispose();
+    }
+  }
+  if (viewerState.highlightRoot) {
+    for (const child of [...viewerState.highlightRoot.children]) {
+      viewerState.highlightRoot.remove(child);
+      if (child.geometry) child.geometry.dispose();
+      if (Array.isArray(child.material)) {
+        child.material.forEach((m) => m.dispose && m.dispose());
+      } else if (child.material && child.material.dispose) {
+        child.material.dispose();
+      }
     }
   }
   viewerState.currentBounds = null;
@@ -536,11 +550,50 @@ function handleViewerClick(event) {
   const intersects = viewerState.raycaster.intersectObjects(viewerState.modelRoot.children, true);
   if (!intersects.length) {
     updateSelectionPanel(null);
+    if (viewerState.highlightRoot) {
+      for (const child of [...viewerState.highlightRoot.children]) {
+        viewerState.highlightRoot.remove(child);
+        if (child.geometry) child.geometry.dispose();
+        if (Array.isArray(child.material)) {
+          child.material.forEach((m) => m.dispose && m.dispose());
+        } else if (child.material && child.material.dispose) {
+          child.material.dispose();
+        }
+      }
+    }
     return;
   }
   const mesh = intersects[0].object;
   updateSelectionPanel(mesh.userData || null);
   updateSelectionViewer(mesh);
+  updateViewerHighlight(mesh);
+}
+
+function updateViewerHighlight(sourceMesh) {
+  const root = viewerState.highlightRoot;
+  if (!root || !viewerState.scene) return;
+  for (const child of [...root.children]) {
+    root.remove(child);
+    if (child.geometry) child.geometry.dispose();
+    if (Array.isArray(child.material)) {
+      child.material.forEach((m) => m.dispose && m.dispose());
+    } else if (child.material && child.material.dispose) {
+      child.material.dispose();
+    }
+  }
+  if (!sourceMesh || !sourceMesh.geometry) return;
+
+  const geom = sourceMesh.geometry.clone();
+  const highlightMat = new THREE.MeshStandardMaterial({
+    color: 0xffcc55,
+    emissive: 0xffcc55,
+    emissiveIntensity: 0.4,
+    transparent: true,
+    opacity: 0.9,
+  });
+  const highlightMesh = new THREE.Mesh(geom, highlightMat);
+  highlightMesh.applyMatrix4(sourceMesh.matrixWorld);
+  root.add(highlightMesh);
 }
 
 function frameScene(bounds) {

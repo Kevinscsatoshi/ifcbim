@@ -293,7 +293,7 @@ h3 {
 }
 
 .interface-grid {
-  grid-template-columns: minmax(330px, 0.74fr) minmax(0, 1.26fr);
+  grid-template-columns: minmax(320px, 0.6fr) minmax(0, 1.4fr);
   margin-top: 1.2rem;
 }
 
@@ -516,7 +516,7 @@ button:disabled {
 .viewer-shell {
   position: relative;
   margin-top: 1rem;
-  min-height: min(68vh, 760px);
+  min-height: min(78vh, 820px);
   border-radius: 28px;
   overflow: hidden;
   background:
