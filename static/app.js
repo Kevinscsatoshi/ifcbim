@@ -610,7 +610,12 @@ function handleViewerClick(event) {
   const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
   viewerState.pointer.set(x, y);
   viewerState.raycaster.setFromCamera(viewerState.pointer, viewerState.camera);
-  const intersects = viewerState.raycaster.intersectObjects(viewerState.modelRoot.children, true);
+  const candidates = viewerState.modelRoot.children.filter((child) => {
+    if (!child.visible) return false;
+    if (viewerState.activeLayer == null) return true;
+    return child.userData && child.userData.layer === viewerState.activeLayer;
+  });
+  const intersects = viewerState.raycaster.intersectObjects(candidates, true);
   if (!intersects.length) {
     updateSelectionPanel(null);
     if (viewerState.highlightRoot) {
@@ -705,7 +710,6 @@ function frameScene(bounds) {
 
 function renderViewerScene(payload) {
   viewerState.layers = new Set();
-  viewerState.meshRegistry = [];
   payload.elements.forEach((element, elementIndex) => {
     if (element.layer) {
       viewerState.layers.add(element.layer);
