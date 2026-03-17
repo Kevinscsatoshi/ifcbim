@@ -563,13 +563,21 @@ function handleViewerClick(event) {
     }
     return;
   }
-  const mesh = intersects[0].object;
-  updateSelectionPanel(mesh.userData || null);
-  updateSelectionViewer(mesh);
-  updateViewerHighlight(mesh);
+
+  const hit = intersects[0].object;
+  const elementId = hit.userData?.elementId;
+  const meshesForElement =
+    elementId == null
+      ? [hit]
+      : viewerState.modelRoot.children.filter((child) => child.userData?.elementId === elementId);
+  const primaryMesh = meshesForElement[0] || hit;
+
+  updateSelectionPanel(primaryMesh.userData || null);
+  updateSelectionViewer(primaryMesh);
+  updateViewerHighlight(meshesForElement);
 }
 
-function updateViewerHighlight(sourceMesh) {
+function updateViewerHighlight(meshes) {
   const root = viewerState.highlightRoot;
   if (!root || !viewerState.scene) return;
   for (const child of [...root.children]) {
@@ -581,19 +589,21 @@ function updateViewerHighlight(sourceMesh) {
       child.material.dispose();
     }
   }
-  if (!sourceMesh || !sourceMesh.geometry) return;
-
-  const geom = sourceMesh.geometry.clone();
-  const highlightMat = new THREE.MeshStandardMaterial({
-    color: 0xffcc55,
-    emissive: 0xffcc55,
-    emissiveIntensity: 0.4,
-    transparent: true,
-    opacity: 0.9,
+  const list = Array.isArray(meshes) ? meshes : [meshes];
+  list.forEach((sourceMesh) => {
+    if (!sourceMesh || !sourceMesh.geometry) return;
+    const geom = sourceMesh.geometry.clone();
+    const highlightMat = new THREE.MeshStandardMaterial({
+      color: 0xffcc55,
+      emissive: 0xffcc55,
+      emissiveIntensity: 0.4,
+      transparent: true,
+      opacity: 0.9,
+    });
+    const highlightMesh = new THREE.Mesh(geom, highlightMat);
+    highlightMesh.applyMatrix4(sourceMesh.matrixWorld);
+    root.add(highlightMesh);
   });
-  const highlightMesh = new THREE.Mesh(geom, highlightMat);
-  highlightMesh.applyMatrix4(sourceMesh.matrixWorld);
-  root.add(highlightMesh);
 }
 
 function frameScene(bounds) {
@@ -617,15 +627,15 @@ function frameScene(bounds) {
 }
 
 function renderViewerScene(payload) {
-  payload.elements.forEach((element) => {
+  payload.elements.forEach((element, elementIndex) => {
     element.mesh_items.forEach((meshItem) => {
       const geometry = buildGeometry(meshItem);
       const material = new THREE.MeshStandardMaterial({
         color: element.color,
         roughness: 0.78,
         metalness: 0.08,
-        transparent: true,
-        opacity: 0.96,
+        transparent: false,
+        opacity: 1.0,
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.userData = {
@@ -636,6 +646,7 @@ function renderViewerScene(payload) {
         text: element.text_content,
         entityType: element.entity_type,
         blockName: element.block_name,
+        elementId: elementIndex,
       };
       viewerState.modelRoot.add(mesh);
     });
