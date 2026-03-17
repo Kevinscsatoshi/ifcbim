@@ -179,6 +179,7 @@ const selectionExtra = document.getElementById("selection-extra");
 const selectionViewerCanvas = document.getElementById("selection-viewer-canvas");
 const resetCameraButton = document.getElementById("reset-camera");
 const wireframeButton = document.getElementById("toggle-wireframe");
+const layerFilterBar = document.getElementById("layer-filter-bar");
 const odaDownloadCta = null;
 const odaDownloadBtn = null;
 const odaInstalledBtn = null;
@@ -213,6 +214,8 @@ const viewerState = {
   wireframe: false,
   raycaster: new THREE.Raycaster(),
   pointer: new THREE.Vector2(),
+  layers: new Set(),
+  activeLayer: null,
 };
 
 const selectionViewerState = {
@@ -410,6 +413,55 @@ function applyWireframeState() {
     }
   });
   wireframeButton.textContent = viewerState.wireframe ? t("solid") : t("wireframe");
+}
+
+function applyLayerFilter() {
+  if (!viewerState.modelRoot) return;
+  const active = viewerState.activeLayer;
+  viewerState.modelRoot.children.forEach((child) => {
+    if (!child.userData || active == null) {
+      child.visible = true;
+    } else {
+      child.visible = child.userData.layer === active;
+    }
+  });
+}
+
+function buildLayerFilters() {
+  if (!layerFilterBar) return;
+  layerFilterBar.innerHTML = "";
+  const layers = Array.from(viewerState.layers || []);
+  if (!layers.length) return;
+
+  const makeChip = (label, value) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "layer-chip";
+    chip.textContent = label;
+    chip.dataset.layerValue = value == null ? "" : String(value);
+    if ((value == null && viewerState.activeLayer == null) || value === viewerState.activeLayer) {
+      chip.classList.add("is-active");
+    }
+    chip.addEventListener("click", () => {
+      viewerState.activeLayer = value;
+      layerFilterBar.querySelectorAll(".layer-chip").forEach((el) => {
+        el.classList.toggle("is-active", el === chip);
+      });
+      applyLayerFilter();
+      // Clear selection/highlight if current selection is not visible anymore.
+      updateSelectionPanel(null);
+      updateViewerHighlight([]);
+    });
+    return chip;
+  };
+
+  layerFilterBar.appendChild(makeChip("All", null));
+  layers
+    .slice()
+    .sort((a, b) => a.localeCompare(b))
+    .forEach((layerName) => {
+      layerFilterBar.appendChild(makeChip(layerName, layerName));
+    });
 }
 
 function updateSelectionPanel(info) {
@@ -627,7 +679,11 @@ function frameScene(bounds) {
 }
 
 function renderViewerScene(payload) {
+  viewerState.layers = new Set();
   payload.elements.forEach((element, elementIndex) => {
+    if (element.layer) {
+      viewerState.layers.add(element.layer);
+    }
     element.mesh_items.forEach((meshItem) => {
       const geometry = buildGeometry(meshItem);
       const material = new THREE.MeshStandardMaterial({
@@ -655,6 +711,9 @@ function renderViewerScene(payload) {
   viewerState.currentBounds = payload.bounds;
   frameScene(payload.bounds);
   applyWireframeState();
+  viewerState.activeLayer = null;
+  buildLayerFilters();
+  applyLayerFilter();
   viewerMeta.textContent = t("elementsVisible", { count: payload.element_count });
 }
 

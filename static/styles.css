@@ -509,8 +509,49 @@ button:disabled {
 
 .viewer-toolbar {
   display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.viewer-toolbar-main {
+  display: flex;
   gap: 0.6rem;
   flex-wrap: wrap;
+}
+
+.layer-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+.layer-chip {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--viewer-bg) 22%, transparent);
+  background: color-mix(in oklab, var(--surface-strong) 40%, white);
+  font-size: 0.78rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 140ms ease, color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+}
+
+.layer-chip:hover {
+  transform: translateY(-1px);
+  color: var(--ink);
+  background: color-mix(in oklab, var(--surface-strong) 52%, white);
+}
+
+.layer-chip.is-active {
+  color: color-mix(in oklab, var(--viewer-bg) 82%, white);
+  background: color-mix(in oklab, var(--viewer-bg) 32%, var(--accent));
+  border-color: color-mix(in oklab, var(--viewer-bg) 40%, var(--accent-dark));
+  box-shadow: 0 10px 22px color-mix(in oklab, var(--viewer-bg) 32%, transparent);
 }
 
 .viewer-shell {
