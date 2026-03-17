@@ -241,6 +241,7 @@ async function loadDwg2DxfModule() {
 
 /**
  * Convert DWG (ArrayBuffer) to DXF string in the browser using libdxfrw WASM.
+ * Uses DRW_DwgR.read() for DWG (same as the lib demo); fileImport is not used for raw buffer.
  * @param {ArrayBuffer} dwgBuffer
  * @returns {Promise<string>} DXF file content (ASCII)
  */
@@ -249,13 +250,16 @@ async function convertDwgToDxfInBrowser(dwgBuffer) {
   const database = new lib.DRW_Database();
   const fileHandler = new lib.DRW_FileHandler();
   fileHandler.database = database;
+  let dwg = null;
   try {
-    if (!fileHandler.fileImport(dwgBuffer, database, false, false)) {
-      throw new Error("fileImport failed");
+    dwg = new lib.DRW_DwgR(dwgBuffer);
+    if (!dwg.read(fileHandler, false)) {
+      throw new Error("DWG read failed (unsupported version or invalid file)");
     }
     const dxfContent = fileHandler.fileExport(lib.DRW_Version.AC1021, false, database, false);
     return dxfContent;
   } finally {
+    if (dwg) dwg.delete();
     database.delete();
     fileHandler.delete();
   }
