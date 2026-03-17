@@ -92,7 +92,7 @@ body::before {
 .lab-shell {
   width: min(1380px, calc(100vw - 2rem));
   margin: 0 auto;
-  padding: clamp(1.2rem, 2vw, 2rem) 0 2.6rem;
+  padding: clamp(0.8rem, 1.5vw, 1.5rem) 0 2.2rem;
   position: relative;
 }
 
@@ -125,7 +125,7 @@ h3 {
 
 h1 {
   max-width: 11ch;
-  font-size: clamp(2.1rem, 3.4vw, 3.4rem);
+  font-size: clamp(1.9rem, 3vw, 3rem);
 }
 
 h2 {
@@ -164,7 +164,7 @@ h3 {
 .dock-panel,
 .viewer-stage,
 .breakdown-panel {
-  padding: clamp(1rem, 1.6vw, 1.6rem);
+  padding: clamp(0.85rem, 1.4vw, 1.4rem);
 }
 
 .masthead-copy::after,
@@ -188,11 +188,21 @@ h3 {
   font-size: 0.96rem;
 }
 
-.masthead-subrow {
+.masthead .lead {
   margin-top: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.masthead-subrow {
+  margin-top: 0.45rem;
   display: flex;
-  gap: 1.25rem;
+  gap: 1rem;
   align-items: flex-start;
+}
+
+.runtime-copy {
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
 }
 
 .runtime-inline {
