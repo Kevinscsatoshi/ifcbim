@@ -187,6 +187,68 @@ h3 {
   gap: 0.6rem;
 }
 
+.dxf-to-dwg-section {
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+}
+
+.dxf-to-dwg-section h2 {
+  margin-bottom: 0.5rem;
+}
+
+.dxf-to-dwg-copy {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.dxf-to-dwg-cta.hidden {
+  display: none;
+}
+
+.dxf-to-dwg-no-oda.hidden {
+  display: none;
+}
+
+.dxf-to-dwg-no-oda {
+  padding: 0.75rem 0;
+}
+
+.dxf-to-dwg-no-oda p {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.dxf-to-dwg-form {
+  margin-bottom: 0.75rem;
+}
+
+.dxf-to-dwg-dropzone {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--line);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.dxf-to-dwg-dropzone input {
+  display: none;
+}
+
+.dxf-to-dwg-result.hidden {
+  display: none;
+}
+
+.dxf-to-dwg-result p {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
 .capability-status {
   display: inline-flex;
   align-self: flex-start;

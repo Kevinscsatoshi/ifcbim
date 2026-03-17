@@ -89,6 +89,41 @@ class ConversionService:
 
         return self._convert(job_id=job_id, original_filename=upload.filename or source_path.name)
 
+    async def convert_dxf_to_dwg(self, upload: UploadFile) -> dict:
+        """Upload a DXF file and convert it to DWG. Requires ODA to be installed."""
+        suffix = Path(upload.filename or "").suffix.lower()
+        if suffix != ".dxf":
+            raise ConversionError("Only .dxf files can be converted to DWG. Upload a DXF file.")
+        job_id = self._new_job_id()
+        job_dir = self.base_dir / job_id
+        job_dir.mkdir(parents=True, exist_ok=True)
+        source_path = job_dir / "source.dxf"
+        total_bytes = 0
+        try:
+            async with aiofiles.open(source_path, "wb") as out:
+                while True:
+                    chunk = await upload.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    total_bytes += len(chunk)
+                    if total_bytes > self.max_upload_bytes:
+                        raise ConversionError(f"Upload exceeded the {self.max_upload_mb}MB file limit.")
+                    await out.write(chunk)
+        finally:
+            await upload.close()
+        dwg_path = job_dir / "output.dwg"
+        try:
+            self.dwg_converter.convert_to_dwg(source_path, dwg_path)
+        except DwgConversionError as exc:
+            raise ConversionError(str(exc)) from exc
+        base_name = (Path(upload.filename or "source.dxf").stem) + ".dwg"
+        return {
+            "job_id": job_id,
+            "filename": base_name,
+            "download_url": f"/download/{job_id}/dwg",
+            "capabilities": self.capabilities(),
+        }
+
     def convert_path(self, source_path: Path) -> dict:
         if not source_path.exists():
             raise ConversionError(f"Input file was not found: {source_path}")
@@ -114,6 +149,7 @@ class ConversionService:
         artifact_map = {
             "ifc": "model.ifc",
             "dxf": "source.dxf",
+            "dwg": "output.dwg",
         }
         if artifact not in artifact_map:
             raise ConversionError("Unknown artifact type.")

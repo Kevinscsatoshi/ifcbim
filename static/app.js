@@ -31,6 +31,17 @@ const wireframeButton = document.getElementById("toggle-wireframe");
 const odaDownloadCta = document.getElementById("oda-download-cta");
 const odaDownloadBtn = document.getElementById("oda-download-btn");
 const odaInstalledBtn = document.getElementById("oda-installed-btn");
+const dxfToDwgSection = document.getElementById("dxf-to-dwg-section");
+const dxfToDwgCta = document.getElementById("dxf-to-dwg-cta");
+const dxfToDwgNoOda = document.getElementById("dxf-to-dwg-no-oda");
+const dxfToDwgForm = document.getElementById("dxf-to-dwg-form");
+const dxfToDwgFileInput = document.getElementById("dxf-to-dwg-file");
+const dxfToDwgFilename = document.getElementById("dxf-to-dwg-filename");
+const dxfToDwgSubmit = document.getElementById("dxf-to-dwg-submit");
+const dxfToDwgResult = document.getElementById("dxf-to-dwg-result");
+const dxfToDwgMessage = document.getElementById("dxf-to-dwg-message");
+const dxfToDwgDownload = document.getElementById("dxf-to-dwg-download");
+const dxfToDwgOdaBtn = document.getElementById("dxf-to-dwg-oda-btn");
 
 const ODA_DOWNLOAD_URL_FALLBACK = "https://www.opendesign.com/guestfiles/oda_file_converter";
 let lastCapabilities = null;
@@ -62,6 +73,15 @@ async function loadCapabilities() {
       odaDownloadCta.classList.add("hidden");
     } else {
       odaDownloadCta.classList.remove("hidden");
+    }
+  }
+  if (dxfToDwgCta && dxfToDwgNoOda) {
+    if (capabilities.dwg_enabled) {
+      dxfToDwgCta.classList.remove("hidden");
+      dxfToDwgNoOda.classList.add("hidden");
+    } else {
+      dxfToDwgCta.classList.add("hidden");
+      dxfToDwgNoOda.classList.remove("hidden");
     }
   }
 }
@@ -416,6 +436,52 @@ if (odaInstalledBtn) {
       .finally(() => {
         odaInstalledBtn.disabled = false;
       });
+  });
+}
+
+if (dxfToDwgFileInput) {
+  dxfToDwgFileInput.addEventListener("change", () => {
+    const file = dxfToDwgFileInput.files[0];
+    if (dxfToDwgFilename) dxfToDwgFilename.textContent = file ? file.name : "未选择文件";
+    if (dxfToDwgSubmit) dxfToDwgSubmit.disabled = !file;
+    if (dxfToDwgResult) dxfToDwgResult.classList.add("hidden");
+  });
+}
+
+if (dxfToDwgForm) {
+  dxfToDwgForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const file = dxfToDwgFileInput?.files[0];
+    if (!file) return;
+    dxfToDwgSubmit.disabled = true;
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const response = await fetch("/api/convert-dxf-to-dwg", { method: "POST", body: formData });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.detail || "转换失败");
+      if (dxfToDwgMessage) dxfToDwgMessage.textContent = `已转换：${payload.filename}`;
+      if (dxfToDwgDownload) {
+        const url = payload.download_url + (payload.filename ? "?filename=" + encodeURIComponent(payload.filename) : "");
+        dxfToDwgDownload.href = url;
+        dxfToDwgDownload.download = payload.filename || "output.dwg";
+        dxfToDwgDownload.classList.remove("hidden");
+      }
+      if (dxfToDwgResult) dxfToDwgResult.classList.remove("hidden");
+    } catch (err) {
+      if (dxfToDwgMessage) dxfToDwgMessage.textContent = err.message;
+      if (dxfToDwgResult) dxfToDwgResult.classList.remove("hidden");
+      if (dxfToDwgDownload) dxfToDwgDownload.classList.add("hidden");
+    } finally {
+      dxfToDwgSubmit.disabled = false;
+    }
+  });
+}
+
+if (dxfToDwgOdaBtn) {
+  dxfToDwgOdaBtn.addEventListener("click", () => {
+    const url = lastCapabilities?.oda_download_url || ODA_DOWNLOAD_URL_FALLBACK;
+    window.open(url, "_blank", "noopener,noreferrer");
   });
 }
 

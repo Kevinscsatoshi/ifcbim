@@ -88,3 +88,34 @@ class DwgConverter:
         if not target_path.exists():
             raise DwgConversionError("DWG conversion finished without producing a DXF file.")
         return target_path
+
+    def convert_to_dwg(self, source_path: Path, target_path: Path, version: str = "R2018") -> Path:
+        """Convert DXF to DWG using ODA File Converter. Requires ODA to be installed."""
+        if source_path.suffix.lower() != ".dxf":
+            raise DwgConversionError("Only DXF files can be converted to DWG.")
+        self._configure_local_install()
+        if not self.is_available():
+            raise DwgConversionError(
+                "ODA File Converter is not installed. Install it to convert DXF to DWG, or use DXF directly for BIM."
+            )
+        try:
+            odafc.convert(
+                str(source_path),
+                str(target_path),
+                version=version,
+                audit=True,
+                replace=True,
+            )
+        except odafc.UnsupportedVersion as exc:
+            raise DwgConversionError(f"不支持的输出版本，仅支持 R12～R2018。{exc}") from exc
+        except odafc.UnknownODAFCError as exc:
+            raise DwgConversionError(f"DXF 转 DWG 失败：{exc}") from exc
+        except odafc.UnsupportedFileFormat as exc:
+            raise DwgConversionError(f"不支持的文件格式：{exc}") from exc
+        except odafc.ODAFCNotInstalledError as exc:
+            raise DwgConversionError(str(exc)) from exc
+        except odafc.ODAFCError as exc:
+            raise DwgConversionError(f"DXF 转 DWG 失败：{exc}") from exc
+        if not target_path.exists():
+            raise DwgConversionError("Conversion finished without producing a DWG file.")
+        return target_path

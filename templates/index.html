@@ -76,6 +76,32 @@
                 <p id="status-text" class="status-text">Waiting for a drawing file.</p>
               </div>
             </form>
+
+            <section id="dxf-to-dwg-section" class="dxf-to-dwg-section">
+              <p class="eyebrow">DXF → DWG</p>
+              <h2>将 DXF 转为 DWG</h2>
+              <p class="dxf-to-dwg-copy">仅支持 DXF 时无法在服务器上转换；安装 ODA File Converter 后即可上传 DXF 并下载 DWG。</p>
+              <div id="dxf-to-dwg-cta" class="dxf-to-dwg-cta hidden">
+                <form id="dxf-to-dwg-form" class="dxf-to-dwg-form">
+                  <label for="dxf-to-dwg-file" class="dxf-to-dwg-dropzone">
+                    <input id="dxf-to-dwg-file" name="file" type="file" accept=".dxf" />
+                    <span>选择 DXF 文件</span>
+                  </label>
+                  <div class="file-picker-row">
+                    <span id="dxf-to-dwg-filename" class="selected-file-name">未选择文件</span>
+                    <button id="dxf-to-dwg-submit" type="submit" class="ghost-button" disabled>转为 DWG</button>
+                  </div>
+                </form>
+                <div id="dxf-to-dwg-result" class="dxf-to-dwg-result hidden">
+                  <p id="dxf-to-dwg-message"></p>
+                  <a id="dxf-to-dwg-download" class="ghost-button" href="#">Download DWG</a>
+                </div>
+              </div>
+              <div id="dxf-to-dwg-no-oda" class="dxf-to-dwg-no-oda">
+                <p>需要安装 ODA File Converter 才能将 DXF 转为 DWG。</p>
+                <button id="dxf-to-dwg-oda-btn" class="ghost-button" type="button">前往下载 ODA</button>
+              </div>
+            </section>
           </section>
 
           <section class="dock-panel summary-panel">

@@ -4,7 +4,7 @@ HTTP routes for the CAD2BIM application.
 
 import logging
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
 
 from app.services.conversion import ConversionError, ConversionService
@@ -31,6 +31,18 @@ async def convert(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail="An unexpected error occurred during conversion.") from exc
 
 
+@router.post("/api/convert-dxf-to-dwg")
+async def convert_dxf_to_dwg(file: UploadFile = File(...)):
+    """Convert uploaded DXF to DWG. Requires ODA File Converter to be installed."""
+    try:
+        return await service.convert_dxf_to_dwg(file)
+    except ConversionError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("DXF to DWG conversion failed")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.") from exc
+
+
 @router.get("/api/jobs/{job_id}")
 async def get_job(job_id: str):
     try:
@@ -48,7 +60,11 @@ async def get_viewer(job_id: str):
 
 
 @router.get("/download/{job_id}/{artifact}")
-async def download(job_id: str, artifact: str):
+async def download(
+    job_id: str,
+    artifact: str,
+    filename: str | None = Query(None, description="Suggested download filename"),
+):
     try:
         path = service.get_artifact_path(job_id, artifact)
     except ConversionError as exc:
@@ -57,5 +73,10 @@ async def download(job_id: str, artifact: str):
     media_type = {
         "ifc": "application/octet-stream",
         "dxf": "application/dxf",
+        "dwg": "application/acad",
     }.get(artifact, "application/octet-stream")
-    return FileResponse(path, media_type=media_type, filename=path.name)
+    return FileResponse(
+        path,
+        media_type=media_type,
+        filename=filename or path.name,
+    )
