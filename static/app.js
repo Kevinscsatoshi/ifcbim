@@ -725,11 +725,6 @@ function renderViewerScene(payload) {
         elementId: elementIndex,
       };
       viewerState.modelRoot.add(mesh);
-      viewerState.meshRegistry.push({
-        mesh,
-        layer: element.layer,
-        bbox: computeBoundingBox(mesh),
-      });
     });
   });
 
