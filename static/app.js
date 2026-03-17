@@ -216,6 +216,7 @@ const viewerState = {
   pointer: new THREE.Vector2(),
   layers: new Set(),
   activeLayer: null,
+  meshRegistry: [],
 };
 
 const selectionViewerState = {
@@ -377,6 +378,7 @@ function clearViewerModel() {
     }
   }
   viewerState.currentBounds = null;
+  viewerState.meshRegistry = [];
 }
 
 function buildGeometry(meshItem) {
@@ -424,6 +426,58 @@ function applyLayerFilter() {
     } else {
       child.visible = child.userData.layer === active;
     }
+  });
+}
+
+function computeBoundingBox(mesh) {
+  if (!mesh.geometry) return null;
+  const geom = mesh.geometry;
+  if (!geom.boundingBox) {
+    geom.computeBoundingBox();
+  }
+  return geom.boundingBox;
+}
+
+function boxesIntersect(a, b) {
+  if (!a || !b) return false;
+  return !(
+    a.max.x < b.min.x ||
+    a.min.x > b.max.x ||
+    a.max.y < b.min.y ||
+    a.min.y > b.max.y ||
+    a.max.z < b.min.z ||
+    a.min.z > b.max.z
+  );
+}
+
+function markOverlappingMeshes() {
+  if (!viewerState.meshRegistry.length) return;
+  const byLayer = new Map();
+  viewerState.meshRegistry.forEach((entry) => {
+    const key = entry.layer || "__no_layer__";
+    if (!byLayer.has(key)) byLayer.set(key, []);
+    byLayer.get(key).push(entry);
+  });
+
+  byLayer.forEach((entries) => {
+    const overlapping = new Set();
+    for (let i = 0; i < entries.length; i += 1) {
+      const a = entries[i];
+      if (!a.bbox) continue;
+      for (let j = i + 1; j < entries.length; j += 1) {
+        const b = entries[j];
+        if (!b.bbox) continue;
+        if (boxesIntersect(a.bbox, b.bbox)) {
+          overlapping.add(a);
+          overlapping.add(b);
+        }
+      }
+    }
+    overlapping.forEach((entry) => {
+      if (entry.mesh && entry.mesh.material && entry.mesh.material.color) {
+        entry.mesh.material.color.setHex(0xff6699);
+      }
+    });
   });
 }
 
@@ -688,6 +742,7 @@ function frameScene(bounds) {
 
 function renderViewerScene(payload) {
   viewerState.layers = new Set();
+  viewerState.meshRegistry = [];
   payload.elements.forEach((element, elementIndex) => {
     if (element.layer) {
       viewerState.layers.add(element.layer);
@@ -713,12 +768,18 @@ function renderViewerScene(payload) {
         elementId: elementIndex,
       };
       viewerState.modelRoot.add(mesh);
+      viewerState.meshRegistry.push({
+        mesh,
+        layer: element.layer,
+        bbox: computeBoundingBox(mesh),
+      });
     });
   });
 
   viewerState.currentBounds = payload.bounds;
   frameScene(payload.bounds);
   applyWireframeState();
+  markOverlappingMeshes();
   viewerState.activeLayer = null;
   buildLayerFilters();
   applyLayerFilter();
