@@ -187,9 +187,9 @@ class ConversionService:
         try:
             parsed = self.parser.parse(str(normalized_source))
         except ValueError as exc:
-            raise ConversionError(f"DXF 解析失败：{exc}") from exc
+            raise ConversionError(f"DXF parse failed: {exc}") from exc
         except Exception as exc:
-            raise ConversionError(f"解析失败：{exc}") from exc
+            raise ConversionError(f"Parse failed: {exc}") from exc
 
         ifc_output = job_dir / "model.ifc"
         viewer_output = job_dir / "viewer.json"
@@ -197,9 +197,9 @@ class ConversionService:
         try:
             build_result = self.ifc_builder.build(parsed, ifc_output)
         except ValueError as exc:
-            raise ConversionError(f"IFC 构建失败：{exc}") from exc
+            raise ConversionError(f"IFC build failed: {exc}") from exc
         except Exception as exc:
-            raise ConversionError(f"IFC 构建失败：{exc}") from exc
+            raise ConversionError(f"IFC build failed: {exc}") from exc
         if build_result.skipped_entities:
             warnings.append(f"{build_result.skipped_entities} CAD entities were skipped because their geometry was incomplete.")
         viewer_output.write_text(json.dumps(build_result.viewer_scene, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -74,16 +74,16 @@ class DwgConverter:
             odafc.convert(str(source_path), str(target_path), replace=True, audit=True)
         except odafc.UnsupportedVersion as exc:
             raise DwgConversionError(
-                f"不支持的 DWG 版本，仅支持 R12～R2018。{exc}"
+                f"Unsupported DWG version. Only R12 through R2018 are supported. {exc}"
             ) from exc
         except odafc.UnknownODAFCError as exc:
-            raise DwgConversionError(f"DWG 转换失败：{exc}") from exc
+            raise DwgConversionError(f"DWG conversion failed: {exc}") from exc
         except odafc.UnsupportedFileFormat as exc:
-            raise DwgConversionError(f"不支持的文件格式：{exc}") from exc
+            raise DwgConversionError(f"Unsupported file format: {exc}") from exc
         except odafc.ODAFCNotInstalledError as exc:
             raise DwgConversionError(str(exc)) from exc
         except odafc.ODAFCError as exc:
-            raise DwgConversionError(f"DWG 转换失败：{exc}") from exc
+            raise DwgConversionError(f"DWG conversion failed: {exc}") from exc
 
         if not target_path.exists():
             raise DwgConversionError("DWG conversion finished without producing a DXF file.")
@@ -107,15 +107,15 @@ class DwgConverter:
                 replace=True,
             )
         except odafc.UnsupportedVersion as exc:
-            raise DwgConversionError(f"不支持的输出版本，仅支持 R12～R2018。{exc}") from exc
+            raise DwgConversionError(f"Unsupported output version. Only R12 through R2018. {exc}") from exc
         except odafc.UnknownODAFCError as exc:
-            raise DwgConversionError(f"DXF 转 DWG 失败：{exc}") from exc
+            raise DwgConversionError(f"DXF to DWG conversion failed: {exc}") from exc
         except odafc.UnsupportedFileFormat as exc:
-            raise DwgConversionError(f"不支持的文件格式：{exc}") from exc
+            raise DwgConversionError(f"Unsupported file format: {exc}") from exc
         except odafc.ODAFCNotInstalledError as exc:
             raise DwgConversionError(str(exc)) from exc
         except odafc.ODAFCError as exc:
-            raise DwgConversionError(f"DXF 转 DWG 失败：{exc}") from exc
+            raise DwgConversionError(f"DXF to DWG conversion failed: {exc}") from exc
         if not target_path.exists():
             raise DwgConversionError("Conversion finished without producing a DWG file.")
         return target_path

@@ -57,6 +57,37 @@ body::before {
   opacity: 0.42;
 }
 
+.lang-switcher {
+  position: fixed;
+  top: 0.75rem;
+  right: 1rem;
+  z-index: 100;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.lang-btn {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+  color: var(--muted);
+  background: color-mix(in oklab, var(--surface) 90%, transparent);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.lang-btn:hover {
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.lang-btn.active {
+  color: var(--accent-dark);
+  background: color-mix(in oklab, var(--accent) 18%, var(--surface));
+  border-color: color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
 .lab-shell {
   width: min(1380px, calc(100vw - 2rem));
   margin: 0 auto;

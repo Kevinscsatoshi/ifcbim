@@ -27,19 +27,19 @@ The project uses `ezdxf.addons.odafc` for DWG normalization.
 
 If ODA is missing, the UI and API return a clear runtime message instead of failing silently.
 
-## 支持的文件与限制
+## Supported files and limits
 
 ### DWG
 
-- **版本**：ODA File Converter 支持 **R12 (AC1009) ～ R2018 (AC1032)** 的 DWG。早于 R12 或尚未被 ODA 支持的更新版本会转换失败。
-- **环境**：需在本机或服务器上安装 [ODA File Converter](https://www.opendesign.com/guestfiles/oda_file_converter)；Vercel 等 Serverless 环境无法安装，仅支持 DXF。
-- **失败情况**：文件损坏、不支持的 DWG 版本、或 ODA 转换异常时，转换会失败；接口会返回 400 及具体原因（如「不支持的 DWG 版本」或「DWG 转换失败」）。
+- **Versions**: ODA File Converter supports **R12 (AC1009) through R2018 (AC1032)**. Older than R12 or newer unsupported versions will fail to convert.
+- **Environment**: Install [ODA File Converter](https://www.opendesign.com/guestfiles/oda_file_converter) on the machine or server; Vercel and other Serverless environments cannot install it, so only DXF is supported there.
+- **Failure cases**: Corrupted files, unsupported DWG version, or ODA conversion errors return 400 with a clear message (e.g. "Unsupported DWG version" or "DWG conversion failed").
 
 ### DXF
 
-- **版本**：支持 ezdxf 可正确读入的常见 DXF 版本（如 R12～R2018 等），文件结构需合法。
-- **实体**：仅下列 2D 实体会参与 BIM 化：Line、LWPolyline、Polyline、Circle、Arc、Insert（块参照）、Text、MText。其他实体类型会被跳过，并在结果中体现为「部分实体未生成 IFC」（skipped_entities）。
-- **失败情况**：文件损坏、编码异常或格式不兼容会导致解析失败；实体几何不完整（如 footprint 点数不足）时，该实体可能被跳过或导致构建失败。解析/构建错误会以 400 和可读文案返回。
+- **Versions**: Common DXF versions that ezdxf can read (e.g. R12–R2018) with valid structure are supported.
+- **Entities**: Only these 2D entities are used for BIM: Line, LWPolyline, Polyline, Circle, Arc, Insert (block ref), Text, MText. Others are skipped and reported as skipped_entities.
+- **Failure cases**: Corrupted or invalid DXF, or incomplete geometry (e.g. footprint with too few points), can cause parse or build failures; errors are returned as 400 with a readable message.
 
 ## Deploy to Vercel
 

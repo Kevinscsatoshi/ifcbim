@@ -25,28 +25,32 @@
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
+    <nav class="lang-switcher" aria-label="Language">
+      <button type="button" id="lang-en" class="lang-btn" data-lang="en">EN</button>
+      <button type="button" id="lang-ja" class="lang-btn" data-lang="ja">日本語</button>
+    </nav>
     <main class="lab-shell">
       <section class="masthead">
         <div class="masthead-copy">
-          <p class="eyebrow">CAD2BIM Studio</p>
-          <h1>Turn DWG drafts into a live IFC scene.</h1>
-          <p class="lead">
+          <p class="eyebrow" data-i18n="mastheadBrand">CAD2BIM Studio</p>
+          <h1 data-i18n="mastheadTitle">Turn DWG drafts into a live IFC scene.</h1>
+          <p class="lead" data-i18n="mastheadLead">
             Upload a DWG or DXF, map CAD layers into IFC classes, export the IFC package,
             and inspect the generated 3D massing directly in the browser.
           </p>
         </div>
         <div class="runtime-card">
-          <p class="eyebrow">Runtime</p>
-          <div id="capability-status" class="capability-status">Checking runtime</div>
-          <p id="capability-message" class="runtime-copy">
+          <p class="eyebrow" data-i18n="eyebrowRuntime">Runtime</p>
+          <div id="capability-status" class="capability-status" data-i18n="runtimeChecking">Checking runtime</div>
+          <p id="capability-message" class="runtime-copy" data-i18n="runtimeMessage">
             Inspecting DWG support, conversion tools, and upload limits.
           </p>
         </div>
         <div id="oda-download-cta" class="oda-download-cta hidden" aria-live="polite">
-          <p class="oda-download-copy">要转换 DWG 需要先安装 ODA File Converter。</p>
+          <p class="oda-download-copy" data-i18n="odaCopy">DWG conversion requires ODA File Converter. Install it to enable DWG support.</p>
           <div class="oda-download-actions">
-            <button id="oda-download-btn" class="ghost-button" type="button">前往下载 ODA</button>
-            <button id="oda-installed-btn" class="ghost-button" type="button">我已安装</button>
+            <button id="oda-download-btn" class="ghost-button" type="button" data-i18n="odaDownload">Download ODA</button>
+            <button id="oda-installed-btn" class="ghost-button" type="button" data-i18n="odaInstalled">I've installed it</button>
           </div>
         </div>
       </section>
@@ -54,61 +58,61 @@
       <section class="interface-grid">
         <aside class="control-column">
           <section class="dock-panel upload-panel">
-            <p class="eyebrow">Input</p>
-            <h2>Drop a drawing file and generate the model.</h2>
+            <p class="eyebrow" data-i18n="eyebrowInput">Input</p>
+            <h2 data-i18n="inputTitle">Drop a drawing file and generate the model.</h2>
             <form id="upload-form" class="upload-form">
               <label for="cad-file" id="dropzone" class="dropzone">
                 <input id="cad-file" name="file" type="file" accept=".dwg,.dxf" />
-                <span class="dropzone-title">DWG / DXF ingestion</span>
-                <span class="dropzone-subtitle">
+                <span class="dropzone-title" data-i18n="dropzoneTitle">DWG / DXF ingestion</span>
+                <span class="dropzone-subtitle" data-i18n="dropzoneSubtitle">
                   Drag a file here or pick one from disk. IFC export stays downloadable. The BIM
                   experience moves into the live 3D viewer.
                 </span>
               </label>
               <div class="file-picker-row">
-                <button id="choose-file" class="ghost-button choose-file-button" type="button">
+                <button id="choose-file" class="ghost-button choose-file-button" type="button" data-i18n="chooseFile">
                   Choose File
                 </button>
-                <p id="selected-file-name" class="selected-file-name">No file selected</p>
+                <p id="selected-file-name" class="selected-file-name" data-i18n="noFileSelected">No file selected</p>
               </div>
               <div class="action-row">
-                <button id="submit-button" type="submit">Generate Model</button>
-                <p id="status-text" class="status-text">Waiting for a drawing file.</p>
+                <button id="submit-button" type="submit" data-i18n="generateModel">Generate Model</button>
+                <p id="status-text" class="status-text" data-i18n="statusWaiting">Waiting for a drawing file.</p>
               </div>
             </form>
 
             <section id="dxf-to-dwg-section" class="dxf-to-dwg-section">
               <p class="eyebrow">DXF → DWG</p>
-              <h2>将 DXF 转为 DWG</h2>
-              <p class="dxf-to-dwg-copy">仅支持 DXF 时无法在服务器上转换；安装 ODA File Converter 后即可上传 DXF 并下载 DWG。</p>
+              <h2 data-i18n="dxf2dwgTitle">Convert DXF to DWG</h2>
+              <p class="dxf-to-dwg-copy" data-i18n="dxf2dwgCopy">When only DXF is supported, conversion runs on your machine. Install ODA File Converter to upload DXF and download DWG here.</p>
               <div id="dxf-to-dwg-cta" class="dxf-to-dwg-cta hidden">
                 <form id="dxf-to-dwg-form" class="dxf-to-dwg-form">
                   <label for="dxf-to-dwg-file" class="dxf-to-dwg-dropzone">
                     <input id="dxf-to-dwg-file" name="file" type="file" accept=".dxf" />
-                    <span>选择 DXF 文件</span>
+                    <span data-i18n="chooseDxf">Choose DXF file</span>
                   </label>
                   <div class="file-picker-row">
-                    <span id="dxf-to-dwg-filename" class="selected-file-name">未选择文件</span>
-                    <button id="dxf-to-dwg-submit" type="submit" class="ghost-button" disabled>转为 DWG</button>
+                    <span id="dxf-to-dwg-filename" class="selected-file-name" data-i18n="noFileChosen">No file chosen</span>
+                    <button id="dxf-to-dwg-submit" type="submit" class="ghost-button" disabled data-i18n="convertToDwg">Convert to DWG</button>
                   </div>
                 </form>
                 <div id="dxf-to-dwg-result" class="dxf-to-dwg-result hidden">
                   <p id="dxf-to-dwg-message"></p>
-                  <a id="dxf-to-dwg-download" class="ghost-button" href="#">Download DWG</a>
+                  <a id="dxf-to-dwg-download" class="ghost-button" href="#" data-i18n="downloadDwg">Download DWG</a>
                 </div>
               </div>
               <div id="dxf-to-dwg-no-oda" class="dxf-to-dwg-no-oda">
-                <p>需要安装 ODA File Converter 才能将 DXF 转为 DWG。</p>
-                <button id="dxf-to-dwg-oda-btn" class="ghost-button" type="button">前往下载 ODA</button>
+                <p data-i18n="dxf2dwgNoOda">ODA File Converter is required to convert DXF to DWG.</p>
+                <button id="dxf-to-dwg-oda-btn" class="ghost-button" type="button" data-i18n="downloadOda">Download ODA</button>
               </div>
             </section>
           </section>
 
           <section class="dock-panel summary-panel">
-            <p class="eyebrow">Output Brief</p>
+            <p class="eyebrow" data-i18n="eyebrowOutput">Output Brief</p>
             <div id="result-empty" class="result-empty">
-              <h3>No model yet</h3>
-              <p>
+              <h3 data-i18n="outputEmptyTitle">No model yet</h3>
+              <p data-i18n="outputEmptyCopy">
                 Once a conversion finishes, this rail shows the file summary, warnings, and IFC
                 download links while the 3D scene opens on the right.
               </p>
@@ -125,19 +129,19 @@
 
               <div class="stats-grid">
                 <article>
-                  <span>Entities</span>
+                  <span data-i18n="entities">Entities</span>
                   <strong id="entity-count">0</strong>
                 </article>
                 <article>
-                  <span>Layers</span>
+                  <span data-i18n="layers">Layers</span>
                   <strong id="layer-count">0</strong>
                 </article>
                 <article>
-                  <span>IFC Elements</span>
+                  <span data-i18n="ifcElements">IFC Elements</span>
                   <strong id="ifc-count">0</strong>
                 </article>
                 <article>
-                  <span>Skipped</span>
+                  <span data-i18n="skipped">Skipped</span>
                   <strong id="skipped-count">0</strong>
                 </article>
               </div>
@@ -152,27 +156,27 @@
           <div class="viewer-stage">
             <div class="viewer-head">
               <div>
-                <p class="eyebrow">Live Viewer</p>
-                <h2>Online 3D inspection</h2>
+                <p class="eyebrow" data-i18n="eyebrowViewer">Live Viewer</p>
+                <h2 data-i18n="viewerTitle">Online 3D inspection</h2>
               </div>
               <div class="viewer-toolbar">
-                <button id="reset-camera" class="ghost-button" type="button">Reset Camera</button>
-                <button id="toggle-wireframe" class="ghost-button" type="button">Wireframe</button>
+                <button id="reset-camera" class="ghost-button" type="button" data-i18n="resetCamera">Reset Camera</button>
+                <button id="toggle-wireframe" class="ghost-button" type="button" data-i18n="wireframe">Wireframe</button>
               </div>
             </div>
 
             <div id="viewer-shell" class="viewer-shell">
               <canvas id="viewer-canvas"></canvas>
               <div id="viewer-empty" class="viewer-empty">
-                <p class="viewer-label">Scene idle</p>
-                <h3>Your generated model will appear here.</h3>
-                <p>Orbit, pan, and zoom the scene after conversion. No BIM download step required.</p>
+                <p class="viewer-label" data-i18n="sceneIdle">Scene idle</p>
+                <h3 data-i18n="viewerEmptyTitle">Your generated model will appear here.</h3>
+                <p data-i18n="viewerEmptyCopy">Orbit, pan, and zoom the scene after conversion. No BIM download step required.</p>
               </div>
-              <div id="viewer-loading" class="viewer-loading hidden">Building scene...</div>
+              <div id="viewer-loading" class="viewer-loading hidden" data-i18n="buildingScene">Building scene...</div>
             </div>
 
             <div class="viewer-footer">
-              <p id="viewer-meta" class="viewer-meta">
+              <p id="viewer-meta" class="viewer-meta" data-i18n="viewerMetaDefault">
                 The browser view is generated from the same massing data used to author the IFC file.
               </p>
             </div>
@@ -180,8 +184,8 @@
 
           <div class="breakdown-panel">
             <div class="panel-heading">
-              <p class="eyebrow">Mapping Breakdown</p>
-              <h2>IFC class distribution</h2>
+              <p class="eyebrow" data-i18n="eyebrowBreakdown">Mapping Breakdown</p>
+              <h2 data-i18n="breakdownTitle">IFC class distribution</h2>
             </div>
             <div id="class-counts" class="class-counts"></div>
           </div>

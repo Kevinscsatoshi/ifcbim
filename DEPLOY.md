@@ -1,93 +1,93 @@
-# CAD2BIM Studio – 部署说明
+# CAD2BIM Studio – Deployment
 
-## 全线上部署（支持 DWG，用户无需下载）
+## Full-online deployment (DWG support, no user download)
 
-要实现**用户不下载任何东西、在浏览器中直接上传 DWG 并完成 BIM 化**，需要将应用部署到**可安装 ODA File Converter 的常驻运行环境**，而不能使用 Vercel 等纯 Serverless（其运行环境中无法安装或运行 ODA）。
+To let **users upload DWG in the browser and run BIM conversion without installing anything**, deploy to an **environment where ODA File Converter can be installed and run** (e.g. Docker, VPS, PaaS). Pure Serverless (e.g. Vercel) cannot install or run ODA.
 
-| 部署方式 | DWG 支持 | 说明 |
-|----------|----------|------|
-| **Vercel** | 仅 DXF | 当前预览环境；不支持在服务器上安装 ODA。 |
-| **Docker / 自建 / PaaS（从 Docker 构建）** | DWG + DXF | 在服务器或镜像中安装一次 ODA，用户全线上传即可。 |
+| Deployment        | DWG support | Notes                                                                 |
+|-------------------|------------|-----------------------------------------------------------------------|
+| **Vercel**        | DXF only   | Preview environment; ODA cannot be installed on the server.         |
+| **Docker / VPS / PaaS (Dockerfile)** | DWG + DXF | Install ODA once on the server or in the image; users upload in the browser. |
 
-**重要**：在支持 DWG 的部署中**不要设置**环境变量 `VERCEL`，否则应用会认为处于 Vercel 环境并禁用 DWG 转换。
+**Important**: Do **not** set the `VERCEL` environment variable in DWG-capable deployments, or the app will disable DWG conversion.
 
 ---
 
-## Docker 部署（推荐）
+## Docker (recommended)
 
-### 1. 获取 ODA File Converter（用于支持 DWG）
+### 1. Get ODA File Converter (for DWG support)
 
-1. 打开 [ODA File Converter 下载页](https://www.opendesign.com/guestfiles/oda_file_converter)。
-2. 选择 **Linux** 版本，下载 **DEB** 包（例如 `ODAFileConverter_QT6_lnxX64_8.3dll_27.1.deb`，具体以官网为准）。
-3. 将下载的 `.deb` 文件放入项目中的 **`docker/oda/`** 目录。  
-   - 若不放入：镜像仍可构建并运行，但仅支持 **DXF**，不支持 DWG。
+1. Open the [ODA File Converter download page](https://www.opendesign.com/guestfiles/oda_file_converter).
+2. Choose **Linux** and download the **DEB** package (e.g. `ODAFileConverter_QT6_lnxX64_8.3dll_27.1.deb`; exact name may vary).
+3. Place the downloaded `.deb` in the project’s **`docker/oda/`** directory.  
+   - If you skip this: the image still builds and runs, but only **DXF** is supported (no DWG).
 
-### 2. 构建镜像
+### 2. Build the image
 
-在项目根目录执行：
+From the project root:
 
 ```bash
 docker build -t cad2bim .
 ```
 
-### 3. 运行容器
+### 3. Run the container
 
-**方式 A：使用 Docker Compose（推荐）**
+**Option A: Docker Compose (recommended)**
 
-项目已包含 `docker-compose.yml`，一键启动并持久化任务目录：
+The project includes `docker-compose.yml`. Start and persist job data:
 
 ```bash
 docker compose up -d
 ```
 
-访问 `http://localhost:8000`。可选：复制 `.env.example` 为 `.env` 后按需修改环境变量。
+Open `http://localhost:8000`. Optionally copy `.env.example` to `.env` and adjust environment variables.
 
-**方式 B：直接 docker run**
+**Option B: docker run**
 
 ```bash
 docker run -p 8000:8000 cad2bim
 ```
 
-不要设置 `VERCEL`。如需持久化转换任务目录，可挂载卷：
+Do not set `VERCEL`. To persist job output, mount a volume:
 
 ```bash
 docker run -p 8000:8000 -v /path/on/host/data/jobs:/app/data/jobs cad2bim
 ```
 
-（若应用使用 `CAD2BIM_JOB_DIR` 等环境变量，请相应调整挂载路径。）
+(Adjust the path if you use `CAD2BIM_JOB_DIR` or similar.)
 
-访问 `http://localhost:8000` 即可使用。若构建时在 `docker/oda/` 中放置了 ODA 的 .deb，页面会显示 **DWG Ready**，用户可直接上传 DWG 进行 BIM 化。
-
----
-
-## 使用 PaaS（Railway / Render / Fly.io 等）
-
-1. 在 PaaS 中选择**从 Dockerfile 构建**（不要选“Vercel”或纯 Serverless 运行时）。
-2. 确保构建上下文中包含 `docker/oda/`；若需 DWG 支持，在构建前将 ODA 的 .deb 放入该目录并提交，或通过 PaaS 的 build 步骤注入。
-3. **不要**在 PaaS 中设置环境变量 `VERCEL`。
-4. 暴露端口 8000（或 PaaS 指定的端口），启动命令由 Dockerfile 的 `CMD` 提供即可。
+If you placed an ODA `.deb` in `docker/oda/` when building, the UI will show **DWG Ready** and users can upload DWG for BIM conversion.
 
 ---
 
-## VPS / 自建服务器（Ubuntu / Debian）
+## PaaS (Railway, Render, Fly.io, etc.)
 
-1. 安装 Python 3.10+、pip 及系统依赖（如 ODA 所需的 `libxcb-util1`）。
-2. 从 [ODA 官网](https://www.opendesign.com/guestfiles/oda_file_converter) 下载 Linux .deb，安装：
+1. Use **build from Dockerfile** (not a Vercel or other Serverless runtime).
+2. Ensure the build context includes `docker/oda/`; for DWG support, add the ODA `.deb` there before building or inject it in the PaaS build step.
+3. Do **not** set the `VERCEL` environment variable.
+4. Expose port 8000 (or the port your PaaS uses). The Dockerfile `CMD` provides the start command.
+
+---
+
+## VPS or self-hosted (Ubuntu / Debian)
+
+1. Install Python 3.10+, pip, and system dependencies (e.g. `libxcb-util1` for ODA).
+2. Download the Linux .deb from [ODA](https://www.opendesign.com/guestfiles/oda_file_converter) and install:
    ```bash
    sudo apt-get install -y ./ODAFileConverter_*.deb
    ```
-3. 克隆项目，创建虚拟环境并安装依赖：`pip install -r requirements.txt`。
-4. **不要**设置 `VERCEL`。使用 uvicorn 启动，例如：
+3. Clone the project, create a venv, and install dependencies: `pip install -r requirements.txt`.
+4. Do **not** set `VERCEL`. Start with uvicorn, e.g.:
    ```bash
    xvfb-run uvicorn main:app --host 0.0.0.0 --port 8000
    ```
-   （`xvfb-run` 用于无显示器环境下避免 ODA 尝试打开 GUI。）
+   (`xvfb-run` avoids ODA trying to open a GUI on a headless server.)
 
-**可选**：若 ODA 安装在非标准路径，可设置环境变量 `ODA_FILE_CONVERTER_PATH` 指向可执行文件路径，应用会优先使用该路径。
+**Optional**: If ODA is installed in a non-standard path, set `ODA_FILE_CONVERTER_PATH` to the converter executable; the app will use it first.
 
 ---
 
-## 小结
+## Summary
 
-- **全线上、用户不下载**：部署到 Docker / 自建 / PaaS（从 Docker 构建），在服务器或镜像中安装 ODA，且不设置 `VERCEL`。
-- **Vercel**：保留现有配置，仅支持 DXF；DWG 需使用本地或上述自建部署。
+- **Full-online, no user install**: Deploy with Docker / VPS / PaaS (from Dockerfile), install ODA on the server or in the image, and do not set `VERCEL`.
+- **Vercel**: Keeps current config; DXF only. Use a local or self-hosted deployment for DWG.

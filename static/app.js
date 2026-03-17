@@ -1,6 +1,170 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+const I18N = {
+  en: {
+    mastheadBrand: "CAD2BIM Studio",
+    eyebrowRuntime: "Runtime",
+    eyebrowInput: "Input",
+    eyebrowOutput: "Output Brief",
+    eyebrowViewer: "Live Viewer",
+    eyebrowBreakdown: "Mapping Breakdown",
+    mastheadTitle: "Turn DWG drafts into a live IFC scene.",
+    mastheadLead: "Upload a DWG or DXF, map CAD layers into IFC classes, export the IFC package, and inspect the generated 3D massing directly in the browser.",
+    runtimeChecking: "Checking runtime",
+    runtimeMessage: "Inspecting DWG support, conversion tools, and upload limits.",
+    odaCopy: "DWG conversion requires ODA File Converter. Install it to enable DWG support.",
+    odaDownload: "Download ODA",
+    odaInstalled: "I've installed it",
+    inputTitle: "Drop a drawing file and generate the model.",
+    dropzoneTitle: "DWG / DXF ingestion",
+    dropzoneSubtitle: "Drag a file here or pick one from disk. IFC export stays downloadable. The BIM experience moves into the live 3D viewer.",
+    chooseFile: "Choose File",
+    noFileSelected: "No file selected",
+    generateModel: "Generate Model",
+    statusWaiting: "Waiting for a drawing file.",
+    dxf2dwgTitle: "Convert DXF to DWG",
+    dxf2dwgCopy: "When only DXF is supported, conversion runs on your machine. Install ODA File Converter to upload DXF and download DWG here.",
+    chooseDxf: "Choose DXF file",
+    noFileChosen: "No file chosen",
+    convertToDwg: "Convert to DWG",
+    downloadDwg: "Download DWG",
+    dxf2dwgNoOda: "ODA File Converter is required to convert DXF to DWG.",
+    downloadOda: "Download ODA",
+    outputEmptyTitle: "No model yet",
+    outputEmptyCopy: "Once a conversion finishes, this rail shows the file summary, warnings, and IFC download links while the 3D scene opens on the right.",
+    entities: "Entities",
+    layers: "Layers",
+    ifcElements: "IFC Elements",
+    skipped: "Skipped",
+    viewerTitle: "Online 3D inspection",
+    resetCamera: "Reset Camera",
+    wireframe: "Wireframe",
+    solid: "Solid",
+    sceneIdle: "Scene idle",
+    viewerEmptyTitle: "Your generated model will appear here.",
+    viewerEmptyCopy: "Orbit, pan, and zoom the scene after conversion. No BIM download step required.",
+    buildingScene: "Building scene...",
+    viewerMetaDefault: "The browser view is generated from the same massing data used to author the IFC file.",
+    breakdownTitle: "IFC class distribution",
+    statusSelected: "Selected {name}",
+    statusChooseFirst: "Choose a DWG or DXF file first.",
+    statusDwgNotSupported: "DWG is not supported in this environment. Install ODA File Converter or upload DXF instead.",
+    statusUploading: "Uploading file and generating IFC + live scene...",
+    statusDone: "Conversion finished. The model is now live in the viewer.",
+    conversionFailed: "Conversion failed.",
+    dwgAvailable: "DWG conversion is available. You can upload DWG for BIM conversion.",
+    dwgReady: "DWG Ready",
+    dxfOnly: "DXF Only",
+    capabilityUnavailable: "Unavailable",
+    capabilityDetectFailed: "Runtime capability detection failed, but you can still try a conversion.",
+    viewerUnavailable: "Viewer unavailable",
+    sceneFailed: "Scene generation did not complete.",
+    fetchingGeometry: "Fetching viewer geometry...",
+    elementsVisible: "{count} IFC elements are visible in-browser. Drag to orbit, scroll to zoom.",
+    downloadArtifact: "Download {name} · {filename}",
+    converted: "Converted: {filename}",
+    maxUpload: "Max upload",
+  },
+  ja: {
+    mastheadBrand: "CAD2BIM Studio",
+    eyebrowRuntime: "ランタイム",
+    eyebrowInput: "入力",
+    eyebrowOutput: "出力概要",
+    eyebrowViewer: "ライブビューア",
+    eyebrowBreakdown: "マッピング内訳",
+    mastheadTitle: "DWG 図面を IFC シーンに。",
+    mastheadLead: "DWG または DXF をアップロードし、CAD レイヤーを IFC クラスにマッピング。IFC をエクスポートし、ブラウザで 3D マッシングを確認できます。",
+    runtimeChecking: "ランタイム確認中",
+    runtimeMessage: "DWG 対応・変換ツール・アップロード上限を確認しています。",
+    odaCopy: "DWG 変換には ODA File Converter が必要です。インストールすると DWG に対応します。",
+    odaDownload: "ODA をダウンロード",
+    odaInstalled: "インストールしました",
+    inputTitle: "図面ファイルをドロップしてモデルを生成",
+    dropzoneTitle: "DWG / DXF 取り込み",
+    dropzoneSubtitle: "ここにファイルをドラッグするか、ディスクから選択。IFC はダウンロード可能。BIM は 3D ビューアで確認できます。",
+    chooseFile: "ファイルを選択",
+    noFileSelected: "ファイル未選択",
+    generateModel: "モデルを生成",
+    statusWaiting: "図面ファイルを待機中です。",
+    dxf2dwgTitle: "DXF を DWG に変換",
+    dxf2dwgCopy: "DXF のみ対応の環境では、変換はお使いの環境で実行されます。ODA File Converter をインストールすると、ここで DXF をアップロードして DWG をダウンロードできます。",
+    chooseDxf: "DXF ファイルを選択",
+    noFileChosen: "ファイル未選択",
+    convertToDwg: "DWG に変換",
+    downloadDwg: "DWG をダウンロード",
+    dxf2dwgNoOda: "DXF を DWG に変換するには ODA File Converter が必要です。",
+    downloadOda: "ODA をダウンロード",
+    outputEmptyTitle: "まだモデルがありません",
+    outputEmptyCopy: "変換が完了すると、ここにファイル概要・警告・IFC ダウンロードリンクが表示され、右側に 3D シーンが開きます。",
+    entities: "エンティティ",
+    layers: "レイヤー",
+    ifcElements: "IFC 要素",
+    skipped: "スキップ",
+    viewerTitle: "オンライン 3D 確認",
+    resetCamera: "カメラリセット",
+    wireframe: "ワイヤー",
+    solid: "ソリッド",
+    sceneIdle: "シーン待機中",
+    viewerEmptyTitle: "生成したモデルがここに表示されます。",
+    viewerEmptyCopy: "変換後にオービット・パン・ズームで操作できます。BIM のダウンロードは不要です。",
+    buildingScene: "シーン構築中...",
+    viewerMetaDefault: "ブラウザ表示は IFC ファイルと同じマッシングデータから生成されています。",
+    breakdownTitle: "IFC クラス内訳",
+    statusSelected: "選択: {name}",
+    statusChooseFirst: "先に DWG または DXF ファイルを選択してください。",
+    statusDwgNotSupported: "この環境では DWG に対応していません。ODA File Converter をインストールするか、DXF をアップロードしてください。",
+    statusUploading: "アップロード中。IFC とライブシーンを生成しています...",
+    statusDone: "変換が完了しました。ビューアでモデルを確認できます。",
+    conversionFailed: "変換に失敗しました。",
+    dwgAvailable: "DWG 変換が利用可能です。DWG をアップロードして BIM 変換できます。",
+    dwgReady: "DWG 対応",
+    dxfOnly: "DXF のみ",
+    capabilityUnavailable: "利用不可",
+    capabilityDetectFailed: "ランタイムの検出に失敗しましたが、変換は試せます。",
+    viewerUnavailable: "ビューア利用不可",
+    sceneFailed: "シーン生成が完了しませんでした。",
+    fetchingGeometry: "ビューアジオメトリ取得中...",
+    elementsVisible: "ブラウザに {count} 個の IFC 要素を表示中。ドラッグで回転、スクロールでズーム。",
+    downloadArtifact: "ダウンロード {name} · {filename}",
+    converted: "変換済み: {filename}",
+    maxUpload: "最大アップロード",
+  },
+};
+
+const LANG_STORAGE_KEY = "cad2bim-lang";
+
+function getPreferredLang() {
+  const stored = localStorage.getItem(LANG_STORAGE_KEY);
+  if (stored === "ja" || stored === "en") return stored;
+  const browser = navigator.language || navigator.userLanguage || "";
+  return browser.startsWith("ja") ? "ja" : "en";
+}
+
+let currentLang = getPreferredLang();
+
+function t(key, subs = {}) {
+  const s = I18N[currentLang][key] ?? I18N.en[key] ?? key;
+  return Object.keys(subs).reduce((acc, k) => acc.replace(new RegExp(`\\{${k}\\}`, "g"), subs[k]), s);
+}
+
+function applyI18n() {
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    const text = I18N[currentLang]?.[key] ?? I18N.en[key];
+    if (text != null) el.textContent = text;
+  });
+  document.querySelectorAll("[data-i18n-attr]").forEach((el) => {
+    const spec = el.getAttribute("data-i18n-attr");
+    const [attr, key] = spec.split(":");
+    const text = I18N[currentLang]?.[key] ?? I18N.en[key];
+    if (attr && text != null) el.setAttribute(attr, text);
+  });
+}
+
+applyI18n();
+
 const form = document.getElementById("upload-form");
 const fileInput = document.getElementById("cad-file");
 const dropzone = document.getElementById("dropzone");
@@ -66,8 +230,8 @@ async function loadCapabilities() {
   const response = await fetch("/api/capabilities");
   const capabilities = await response.json();
   lastCapabilities = capabilities;
-  capabilityStatus.textContent = capabilities.dwg_enabled ? "DWG Ready" : "DXF Only";
-  capabilityMessage.textContent = `${capabilities.dwg_message} Max upload: ${capabilities.max_upload_mb}MB.`;
+  capabilityStatus.textContent = capabilities.dwg_enabled ? t("dwgReady") : t("dxfOnly");
+  capabilityMessage.textContent = `${capabilities.dwg_message} ${t("maxUpload")}: ${capabilities.max_upload_mb}MB.`;
   if (odaDownloadCta) {
     if (capabilities.dwg_enabled) {
       odaDownloadCta.classList.add("hidden");
@@ -91,7 +255,7 @@ function pickFile(file) {
   dataTransfer.items.add(file);
   fileInput.files = dataTransfer.files;
   selectedFileName.textContent = file.name;
-  setStatus(`Selected ${file.name}`);
+  setStatus(t("statusSelected", { name: file.name }));
 }
 
 function renderClassCounts(classCountMap) {
@@ -118,7 +282,7 @@ function renderArtifacts(artifacts) {
   Object.entries(artifacts).forEach(([name, artifact]) => {
     const link = document.createElement("a");
     link.href = artifact.download_url;
-    link.textContent = `Download ${name.toUpperCase()} · ${artifact.filename}`;
+    link.textContent = t("downloadArtifact", { name: name.toUpperCase(), filename: artifact.filename });
     artifactLinks.appendChild(link);
   });
 }
@@ -247,7 +411,7 @@ function applyWireframeState() {
       child.material.wireframe = viewerState.wireframe;
     }
   });
-  wireframeButton.textContent = viewerState.wireframe ? "Solid" : "Wireframe";
+  wireframeButton.textContent = viewerState.wireframe ? t("solid") : t("wireframe");
 }
 
 function frameScene(bounds) {
@@ -294,7 +458,7 @@ function renderViewerScene(payload) {
   viewerState.currentBounds = payload.bounds;
   frameScene(payload.bounds);
   applyWireframeState();
-  viewerMeta.textContent = `${payload.element_count} IFC elements are visible in-browser. Drag to orbit, scroll to zoom.`;
+  viewerMeta.textContent = t("elementsVisible", { count: payload.element_count });
 }
 
 async function loadViewer(viewerUrl, inlineScene = null) {
@@ -303,7 +467,7 @@ async function loadViewer(viewerUrl, inlineScene = null) {
 
   viewerEmpty.classList.add("hidden");
   viewerLoading.classList.remove("hidden");
-  viewerMeta.textContent = "Fetching viewer geometry...";
+  viewerMeta.textContent = t("fetchingGeometry");
 
   try {
     if (inlineScene) {
@@ -314,14 +478,14 @@ async function loadViewer(viewerUrl, inlineScene = null) {
     const response = await fetch(viewerUrl);
     const payload = await response.json();
     if (!response.ok) {
-      throw new Error(payload.detail || "Viewer data could not be loaded.");
+      throw new Error(payload.detail || t("sceneFailed"));
     }
     renderViewerScene(payload);
   } catch (error) {
     viewerEmpty.classList.remove("hidden");
     viewerEmpty.innerHTML = `
-      <p class="viewer-label">Viewer unavailable</p>
-      <h3>Scene generation did not complete.</h3>
+      <p class="viewer-label">${t("viewerUnavailable")}</p>
+      <h3>${t("sceneFailed")}</h3>
       <p>${error.message}</p>
     `;
   } finally {
@@ -333,7 +497,7 @@ async function submitCurrentFile(event) {
   event.preventDefault();
   const file = fileInput.files[0];
   if (!file) {
-    setStatus("Choose a DWG or DXF file first.");
+    setStatus(t("statusChooseFirst"));
     return;
   }
   if (
@@ -341,7 +505,7 @@ async function submitCurrentFile(event) {
     !lastCapabilities.dwg_enabled &&
     file.name.toLowerCase().endsWith(".dwg")
   ) {
-    setStatus("当前环境不支持 DWG，请先安装 ODA File Converter 或改为上传 DXF。");
+    setStatus(t("statusDwgNotSupported"));
     if (odaDownloadCta) {
       odaDownloadCta.classList.remove("hidden");
       odaDownloadCta.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -350,7 +514,7 @@ async function submitCurrentFile(event) {
   }
 
   submitButton.disabled = true;
-  setStatus("Uploading file and generating IFC + live scene...");
+  setStatus(t("statusUploading"));
 
   const formData = new FormData();
   formData.append("file", file);
@@ -362,12 +526,12 @@ async function submitCurrentFile(event) {
     });
     const payload = await response.json();
     if (!response.ok) {
-      throw new Error(payload.detail || "Conversion failed.");
+      throw new Error(payload.detail || t("conversionFailed"));
     }
 
     renderResult(payload);
     await loadViewer(payload.viewer.data_url, payload.viewer.scene || null);
-    setStatus("Conversion finished. The model is now live in the viewer.");
+    setStatus(t("statusDone"));
   } catch (error) {
     setStatus(error.message);
   } finally {
@@ -430,7 +594,7 @@ if (odaInstalledBtn) {
     loadCapabilities()
       .then(() => {
         if (lastCapabilities?.dwg_enabled) {
-          setStatus("DWG 转换已可用，可以上传 DWG 进行 BIM 化。");
+          setStatus(t("dwgAvailable"));
         }
       })
       .finally(() => {
@@ -442,7 +606,7 @@ if (odaInstalledBtn) {
 if (dxfToDwgFileInput) {
   dxfToDwgFileInput.addEventListener("change", () => {
     const file = dxfToDwgFileInput.files[0];
-    if (dxfToDwgFilename) dxfToDwgFilename.textContent = file ? file.name : "未选择文件";
+    if (dxfToDwgFilename) dxfToDwgFilename.textContent = file ? file.name : t("noFileChosen");
     if (dxfToDwgSubmit) dxfToDwgSubmit.disabled = !file;
     if (dxfToDwgResult) dxfToDwgResult.classList.add("hidden");
   });
@@ -459,8 +623,8 @@ if (dxfToDwgForm) {
     try {
       const response = await fetch("/api/convert-dxf-to-dwg", { method: "POST", body: formData });
       const payload = await response.json();
-      if (!response.ok) throw new Error(payload.detail || "转换失败");
-      if (dxfToDwgMessage) dxfToDwgMessage.textContent = `已转换：${payload.filename}`;
+      if (!response.ok) throw new Error(payload.detail || t("conversionFailed"));
+      if (dxfToDwgMessage) dxfToDwgMessage.textContent = t("converted", { filename: payload.filename });
       if (dxfToDwgDownload) {
         const url = payload.download_url + (payload.filename ? "?filename=" + encodeURIComponent(payload.filename) : "");
         dxfToDwgDownload.href = url;
@@ -485,7 +649,33 @@ if (dxfToDwgOdaBtn) {
   });
 }
 
+function refreshLangDependentUI() {
+  if (lastCapabilities) {
+    capabilityStatus.textContent = lastCapabilities.dwg_enabled ? t("dwgReady") : t("dxfOnly");
+    capabilityMessage.textContent = `${lastCapabilities.dwg_message} ${t("maxUpload")}: ${lastCapabilities.max_upload_mb}MB.`;
+  }
+  if (viewerState.modelRoot) applyWireframeState();
+  document.querySelectorAll(".lang-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.getAttribute("data-lang") === currentLang);
+    btn.setAttribute("aria-pressed", btn.getAttribute("data-lang") === currentLang);
+  });
+}
+
+document.querySelectorAll(".lang-btn").forEach((btn) => {
+  btn.setAttribute("aria-pressed", btn.getAttribute("data-lang") === currentLang);
+  btn.classList.toggle("active", btn.getAttribute("data-lang") === currentLang);
+  btn.addEventListener("click", () => {
+    const lang = btn.getAttribute("data-lang");
+    if (lang === "en" || lang === "ja") {
+      localStorage.setItem(LANG_STORAGE_KEY, lang);
+      currentLang = lang;
+      applyI18n();
+      refreshLangDependentUI();
+    }
+  });
+});
+
 loadCapabilities().catch(() => {
-  capabilityStatus.textContent = "Unavailable";
-  capabilityMessage.textContent = "Runtime capability detection failed, but you can still try a conversion.";
+  capabilityStatus.textContent = t("capabilityUnavailable");
+  capabilityMessage.textContent = t("capabilityDetectFailed");
 });
